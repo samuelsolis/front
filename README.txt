@@ -44,7 +44,9 @@ Installation:
 
 8. Set your DEFAULT PAGE to be front_page
 
-9. go to ADMINISTER - USERS - CONFIGURE - PERMISSIONS to toggle the ACCESS FRONT PAGE settings.
+9. go to ADMINISTER - USERS - CONFIGURE - PERMISSIONS to toggle the ACCESS FRONT_PAGE setting*
+
+(* IMPORTANT: this sets access to front_page for anonymous user and authenticated user so the users can view them.)
 
 
 
