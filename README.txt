@@ -42,6 +42,8 @@ Installation:
 
 8. Set your DEFAULT PAGE to be front_page
 
+9. go to ADMINISTER - USERS - CONFIGURE - PERMISSIONS to toggle the ACCESS FRONT PAGE settings.
+
 Hope you find it useful. Email me or post a message on the drupal.org site if you have any ideas on how I can improve the module.
 
 Dublin Drupaller
