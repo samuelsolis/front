@@ -1,17 +1,11 @@
 TO DO LIST:
 
-Current improvement ides are as follows:
+Current improvement ideas are as follows:
 
-a) Allow a custom front page based on user roles. 
-
-for example on a music site based on drupal, specify a custom front page for Drummers and and alternative front page for Guitarists.
-
-This is work in progress. 
-
-Due to have an update in mid-febuar 2005.
+This module is looking for new improvement ideas.
 
 
-Will update this area, though, if it proves to be practical and I find time to update it.
+Drop us an email at dub(at)m3m.eu.com if you have any ideas.
 
 
 Hope you find it useful
