@@ -3,7 +3,7 @@
 
 /** 
  * @file 
- * This is my first module that allows the user to set a custom front page
+ * This is our first module that allows the user to set a custom front page
  * to the drupal installation.
  * 
  * This module is designed for 4.5 compatibility
