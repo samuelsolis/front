@@ -3,12 +3,17 @@
 
 /** 
  * @file 
- * This module allows the user to set a custom front page
- * to the drupal installation for both logged in and anonymous visitors.
+ * This is my first module that allows the user to set a custom front page
+ * to the drupal installation.
  * 
  * This module is designed for 4.5 compatibility
- * jay@m3m.eu.com
- * 
+ *
+ * Updated on December 16th 2004 with the addition of the REDIRECT function.
+ *
+ * REDIRECT - now administrators can redirect logged-in-users to
+ * another page very simply and easily when in the 
+ * ADMINISTER - SETTINGS - FRONT_PAGE setup page.
+ *
  */ 
 
 
@@ -86,9 +91,10 @@ function front_page_menu($may_cache) {
 
 function front_page_settings() {
   $output  = form_textarea(t("Front page HTML or TEXT for users not logged in"), "front_page_text", variable_get("front_page_text", ""), 60, 10, t("Paste your HTML here for users or visitors to your site who are not logged in"));
-  $output .= form_select(t('Select whether you want your logged-in page to be a THEMED or a FULL front_page'), 'front_page_size', variable_get('front_page_size', themed), drupal_map_assoc(array(themed, full)), t('A THEMED front_page means your default layout, theme and stylesheet will be loaded with your custom front_page. A FULL front_page allows you to have a completely different layout, style sheet etc. Useful if you want to use a FLASH based front-end to your site or a splash-page.<br>'));
+  $output .= form_select(t('Select whether you want your logged-in page to be a THEMED or a FULL front_page'), 'front_page_size', variable_get('front_page_size', themed), drupal_map_assoc(array(themed, full, redirect)), t('A THEMED front_page means your default layout, theme and stylesheet will be loaded with your custom front_page. A FULL front_page allows you to have a completely different layout, style sheet etc. Useful if you want to use a FLASH based front-end to your site or a splash-page.<br>'));
   $output .= form_textarea(t("Front page HTML or TEXT for logged in users"), "front_page_text_yes", variable_get("front_page_text_yes", ""), 60, 10, t("Paste your HTML here for users you are already logged in"));
-  $output .= form_select(t('Select whether you want this page to be a THEMED or a FULL front_page'), 'front_page2_size', variable_get('front_page2_size', themed), drupal_map_assoc(array(themed, full)), t(''));
+  $output .= form_select(t('Select whether you want this page to be a THEMED or FULL front_page or if you want to REDIRECT the user to another page/path'), 'front_page2_size', variable_get('front_page2_size', themed), drupal_map_assoc(array(themed, full, redirect)), t(''));
+$output .= form_textfield(t('Redirect to'), 'front_page_redirect', variable_get('front_page_redirect', 'node'), 70, 70, t('If you have selected REDIRECT you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'));
 return $output;
 
 }
@@ -126,6 +132,9 @@ else{
     $fpsize = variable_get("front_page2_size", "drupal");
 		if ($fpsize == "themed") {print theme('page', $output);}
 		if ($fpsize == "full") {print $output;}
+		if ($fpsize == "redirect") {
+$output = variable_get("front_page_redirect", "drupal");
+drupal_goto($path = $output, $query = NULL, $fragment = NULL);}
 		}
 }
 
