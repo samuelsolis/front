@@ -1,0 +1,20 @@
+TO DO LIST:
+
+Current improvement ides are as follows:
+
+a) Allow a custom front page based on user roles. 
+
+for example on a music site based on drupal, specify a custom front page for Drummers and and alternative front page for Guitarists.
+
+This is work in progress. 
+
+There is another module called SECTIONS.MODULE which I think will perform a similar function So I'm not sure if developing front_page.module further is a good idea.
+
+Will update this area, though, if it proves to be practical and I find time to update it.
+
+
+Hope you find it useful
+
+Jason
+
+jay@m3m.eu.com
