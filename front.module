@@ -1,0 +1,33 @@
+<?php
+/* Credits to UnConeD for the code
+ * Only the front_settings and front_help is mine
+ * Warren Brian Noronha <warren@gnu.org.in>
+ */
+
+function front_help($section) {
+  $output = "";
+  
+  switch ($section) {
+  case 'admin/system/modules#description':
+    $output = t("Build custom frontpages.");
+    break;
+  }
+  return $output;
+}
+
+function front_link($type, $node = 0, $main) {
+if ($type == "system") {
+   menu("front", t("front"), "front_page", 0, MENU_SHOW);
+   }
+ }
+
+function front_settings() {
+  $output = form_textarea(t("Page text"), "front_text", variable_get("front_text", ""), 60, 10, t("Paste your HTML here"));
+  return $output;
+}
+
+function front_page() {
+  $output = variable_get("front_text", "drupal");
+  print $output;
+}
+?>
