@@ -1,0 +1,136 @@
+<?php
+// $Id$ 
+
+/** 
+ * @file 
+ * This module allows the user to set a custom front page
+ * to the drupal installation for both logged in and anonymous visitors.
+ * 
+ * This module is designed for 4.5 compatibility
+ * jay@m3m.eu.com
+ * 
+ */ 
+
+
+/** 
+ * Implementation of hook_help(). 
+ * 
+ * This is the explanatory text that appears in your administer - modules page 
+ * where you switch on/off modules
+ */ 
+function front_page_help($section) { 
+  switch ($section) { 
+    case 'admin/modules#description': 
+      // This description is shown in the listing at admin/modules. 
+      return t('this module allows you to set a custom home page.'); 
+  } 
+} 
+
+/** 
+ * Implementation of hook_perm(). 
+ * 
+ * this function makes the front_page option appear in the user - permissions page
+ */ 
+
+function front_page_perm() { 
+  return array('access front_page');
+} 
+
+
+/** 
+ * Am not too sure what this function does.
+ */ 
+
+
+function front_page_link($type, $node = 0, $main) {
+if ($type == "system") {
+   menu("front_page", t("front"), "front_page", 0, MENU_SHOW);
+   }
+ }
+
+
+
+/** 
+ * this function sets the necessary paths etc. so drupal
+ * knows where to find the front_page
+ * 
+ * in your Administer - Settings make sure default front page is set
+ * to front_page
+ * 
+ * Please note that I have left the Title blank below so nothing appears above the 
+ * page when it is displayed.
+ */ 
+
+
+
+function front_page_menu($may_cache) {
+  if ($may_cache) {
+    $items = array();
+    $items[] = array(
+      'path' => 'front_page',
+      'title' => t(''),
+      'callback' => 'front_page',
+      'access' => user_access('access front_page'),
+      'type' => MENU_SUGGESTED_ITEM);
+    return $items;
+  } 
+}
+
+
+/** 
+ * this function allows a user to change or paste html in the
+ * administer - settings area.
+ * 
+ */ 
+
+
+function front_page_settings() {
+  $output  = form_textarea(t("Front page HTML or TEXT for users not logged in"), "front_page_text", variable_get("front_page_text", ""), 60, 10, t("Paste your HTML here for users or visitors to your site who are not logged in"));
+  $output .= form_select(t('Select whether you want your logged-in page to be a THEMED or a FULL front_page'), 'front_page_size', variable_get('front_page_size', themed), drupal_map_assoc(array(themed, full)), t('A THEMED front_page means your default layout, theme and stylesheet will be loaded with your custom front_page. A FULL front_page allows you to have a completely different layout, style sheet etc. Useful if you want to use a FLASH based front-end to your site or a splash-page.<br>'));
+  $output .= form_textarea(t("Front page HTML or TEXT for logged in users"), "front_page_text_yes", variable_get("front_page_text_yes", ""), 60, 10, t("Paste your HTML here for users you are already logged in"));
+  $output .= form_select(t('Select whether you want this page to be a THEMED or a FULL front_page'), 'front_page2_size', variable_get('front_page2_size', themed), drupal_map_assoc(array(themed, full)), t(''));
+return $output;
+
+}
+
+/** 
+ * print out the page
+ * 
+ * this function loads up the front page and displays it
+ * 
+ * the front_page module is setup to load the default theme and 
+ * default blocks with it. If you want to change it so it loads
+ * as a full page on it's own..simple replace the last line where it
+ * says:
+ * print theme('page', $output); 
+ * with 
+ * print $output;
+ *
+ * That will load whatever you paste into your front_page settings under
+ * administer-settings as a full page.
+ *
+ */ 
+
+
+function front_page() {
+
+global $user;
+if (!$user->uid){
+    $output = variable_get("front_page_text", "drupal");
+		$fpsize = variable_get("front_page_size", "drupal");
+		if ($fpsize == "themed") {print theme('page', $output);}
+		if ($fpsize == "full") {print $output;}
+		}
+else{
+    $output = variable_get("front_page_text_yes", "drupal");
+    $fpsize = variable_get("front_page2_size", "drupal");
+		if ($fpsize == "themed") {print theme('page', $output);}
+		if ($fpsize == "full") {print $output;}
+		}
+}
+
+
+
+
+
+?>
