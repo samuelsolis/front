@@ -1,3 +1,5 @@
+$Id$
+
 Introduction:
 
 This module is for people who want a custom front page to their Drupal sites.
