@@ -15,9 +15,11 @@ Key Functionality:
 
 3. Allows you to have a FULL front page - i.e. completely different layout to your main drupal site or a THEMED full page, i.e. it loads with your default drupal site theme & layout.
 
-######### (update Dec. 16th 2004) #########
+4. Allows you to automatically REDIRECT logged in users to a specific page or path.
 
-4. Allows you to automatically REDIRECT logged in users to a specific page or path. 
+######### (update Feb. 15th 2005) #########
+
+5. Updated with a PHP checkbox that allows drupal site administrators to include PHP in their front page(s). (Thanks Scott!)
 
 ############################################
 
@@ -44,8 +46,14 @@ Installation:
 
 9. go to ADMINISTER - USERS - CONFIGURE - PERMISSIONS to toggle the ACCESS FRONT PAGE settings.
 
-Hope you find it useful. Email me or post a message on the drupal.org site if you have any ideas on how I can improve the module.
+
+
+
+Hope you find it useful. 
+
+This module has been developed by a few members of the drupal community and we're always looking for ideas for improving it. Email me or post a message on the drupal.org site if you have any ideas on how we can improve the module. 
 
 Dublin Drupaller
+
 
 dub@m3m.eu.com
