@@ -2,7 +2,9 @@ Introduction:
 
 This module is for people who want a custom front page to their Drupal sites.
 
-Intended for Drupal version 4.5
+THe key functionality of this module is outlined below. I recommend drupal site administrators look at SECTIONS.MODULE if you are looking to vary the theme/look of different sections of your site.
+
+This module is intended for Drupal version 4.5 and later versions.
 
 
 Key Functionality:
@@ -18,6 +20,9 @@ Key Functionality:
 4. Allows you to automatically REDIRECT logged in users to a specific page or path. 
 
 ############################################
+
+
+
 
 Installation:
 
@@ -39,6 +44,6 @@ Installation:
 
 Hope you find it useful. Email me or post a message on the drupal.org site if you have any ideas on how I can improve the module.
 
-Jason
+Dublin Drupaller
 
-jay@m3m.eu.com
+dub@m3m.eu.com
