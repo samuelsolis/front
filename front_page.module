@@ -38,16 +38,6 @@ function front_page_help($section) {
   } 
 } 
 
-/** 
- * Implementation of hook_perm(). 
- * 
- * this function makes the front_page option appear in the user - permissions page
- */ 
-
-function front_page_perm() { 
-  return array('access front_page');
-} 
-
 
 /** 
  * Am not too sure what this function does.
