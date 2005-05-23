@@ -72,7 +72,6 @@ function front_page_menu($may_cache) {
       'path' => 'front_page',
       'title' => t(''),
       'callback' => 'front_page',
-      'access' => user_access('access front_page'),
       'type' => MENU_SUGGESTED_ITEM);
     return $items;
   } 
