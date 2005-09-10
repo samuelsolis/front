@@ -94,11 +94,9 @@ function front_page_settings() {
  
 function front_page() {
 	//this checks to see if you are overriding HOME links on the site
-	$homelink = variable_get("front_page_breadcrumb", 0);
-	if ($homelink = '1'){
+	if (variable_get('front_page_breadcrumb',0)) {
 	  // This checks to see if the referer is an internal HOME link or not.
-	  $homelink = variable_get("front_page_breadcrumb", 0);
-	  $newhome =  variable_get("front_page_breadcrumb_redirect","node");
+	  $newhome =  variable_get('front_page_breadcrumb_redirect','node');
 	  $ref = $_SERVER["HTTP_REFERER"];
 	  global $user, $base_url;
 	  $parsed_url=parse_url($base_url);
