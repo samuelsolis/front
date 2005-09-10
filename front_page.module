@@ -4,14 +4,9 @@
 /** 
  * @file 
  * This module allows the user to set a custom front page
- * to the drupal installation.
+ * to the Drupal installation.
  * 
- * This module is designed for 4.5.x compatibility
- * Also works with 4.6.x
- *
- * Updated on MAY 18th 2005 with the added Redirect option for anonymous users
- * Updated on MAY 21st 2005 with the SAME option to save users who 
- * want the same front page for both anonymous & authenticated users
+ * This module works with Drupal 4.5.x and Drupal 4.6.x
  *
  *
  * This module was developed by various members of the drupal community
@@ -33,18 +28,8 @@ function front_page_help($section) {
   switch ($section) { 
     case 'admin/modules#description': 
       // This description is shown in the listing at admin/modules. 
-      return t('this module allows you to set a custom home page.'); 
+      return t('Allows you to setup custom front pages for your site. After enabling this module, click on %link to setup your custom front pages.', array('%link'=>l('admin/settings/front_page', 'admin/settings/front_page'))); 
   } 
-} 
-
-/** 
- * Implementation of hook_perm(). 
- * 
- * this function makes the front_page option appear in the user - permissions page
- */ 
-
-function front_page_perm() { 
-  return array('access front_page');
 } 
 
 /** 
@@ -64,15 +49,14 @@ function front_page_menu($may_cache) {
       'path' => 'front_page',
       'title' => t(''),
       'callback' => 'front_page',
-      'access' => user_access('access front_page'),
+      'access' => TRUE,
       'type' => MENU_SUGGESTED_ITEM);
   } 
   return $items;
 }
 
 /** 
- * this function allows a user to change or paste html in the
- * administer - settings area.
+ * this function sets up the admin/settings/front_page settings page
  * 
  */ 
 
@@ -87,34 +71,46 @@ function front_page_settings() {
 
   $group = form_textarea(t("Front page HTML or TEXT for logged in users"), "front_page_text_yes", variable_get("front_page_text_yes", ""), 60, 10, t("Paste your HTML here for users you are already logged in"));
   $group .= form_select(t('Select whether you want a THEMED/FULL/REDIRECT front_page or display the SAME content used for Anonymous Users (not logged in)'), 'front_page2_size', variable_get('front_page2_size', themed), drupal_map_assoc(array(themed, full, redirect, same)), t(''));
-  $group .= form_textfield(t('Redirect to'), 'front_page_redirect', variable_get('front_page_redirect', 'node'), 70, 70, t('If you have selected REDIRECT you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'));
+  $group .= form_textfield(t('Redirect to'), 'front_page_redirect', variable_get('front_page_redirect', 'node'), 70, 70, t('If you have selected REDIRECT you need to specify where the user should be pointed to. Do not redirect anonymous & authenticated users to the same page.'));
   $group .= form_checkbox(t('Allow embedded PHP code in front page for authenticated users'), 'front_page_php_yes', 1, variable_get('front_page_php_yes',0), t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.'));
   $output .= form_group(t('Authenticated users (logged in)'),$group);
-
+  
+  $group = form_textfield(t('Default Front page'), 'site_frontpage', variable_get('site_frontpage', 'node'), 70, 70, t('Once you are happy how your front_pages for anonymous and authenticated users <a href="front_page">look</a> change your default front page setting to <em>front_page</em>. Don\'t forget to set the correct admin/access permissions in'));
+  $group .= form_checkbox(t('Redirect your site HOME links'), 'front_page_breadcrumb', 1, variable_get('front_page_breadcrumb',0), t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link) when they are in your site instead of bringing them back to your front_page. Useful if you are using this module to specify a special splash page or flash intro to your site.'));
+  $group .= form_textfield(t('Redirect your site HOME links to'), 'front_page_breadcrumb_redirect', variable_get('front_page_breadcrumb_redirect', 'node'), 70, 70, t('Specify where the user should be redirected to. An example would be <em>node/12</em>.'));
+  $output .= form_group(t('Site Settings'),$group);
+  
   return $output;
+
 }
 
 /** 
  * print out the page
  * 
- * this function loads up the front page and displays it
- * 
- * the front_page module is setup to load the default theme and 
- * default blocks with it. If you want to change it so it loads
- * as a full page on it's own..simple replace the last line where it
- * says:
- * print theme('page', $output); 
- * with 
- * print $output;
- *
- * That will load whatever you paste into your front_page settings under
- * administer-settings as a full page.
+ * this function loads up the front page and displays it 
  *
  */ 
 
+ 
 function front_page() {
-  global $user;
+	//this checks to see if you are overriding HOME links on the site
+	$homelink = variable_get("front_page_breadcrumb", 0);
+	if ($homelink = '1'){
+	  // This checks to see if the referer is an internal HOME link or not.
+	  $homelink = variable_get("front_page_breadcrumb", 0);
+	  $newhome =  variable_get("front_page_breadcrumb_redirect","node");
+	  $ref = $_SERVER["HTTP_REFERER"];
+	  global $user, $base_url;
+	  $parsed_url=parse_url($base_url);
+      $domain = $parsed_url['host'];
+	  if (stristr($ref, $domain)) 
+	   {drupal_goto($path = $newhome, $query = NULL, $fragment = NULL);
+	   }
+  }
+  			
+  // the following is the code that loads the front_page settings
   
+  global $user;
   if (!$user->uid || variable_get("front_page2_size", "drupal") == "same"){
     $output = variable_get("front_page_text", "drupal");
     
@@ -160,6 +156,6 @@ function front_page() {
   }
   // redirect
   drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+  
 }
-
 ?>

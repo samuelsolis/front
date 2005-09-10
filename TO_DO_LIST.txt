@@ -2,6 +2,11 @@ TO DO LIST:
 
 Current improvement ideas are as follows:
 
+1. Allow Drupal site administrators to specify a specific front page based on ROLE types.
+
+2. Allow different front pages for different sections.
+
+
 This module is looking for new improvement ideas.
 
 Drop us an email at dub(at)m3m.eu.com if you have any ideas.

@@ -11,17 +11,20 @@ This module is intended for Drupal version 4.5 and later versions.
 
 Key Functionality:
 
-1. Allows you to specify a custom front page to your site for visitors who are not-logged in.
-
-2. Allows you to specify an alternative front page to your site for users who are already logged in.
+1. Allows you to specify a custom front page to your site for visitors who are not-logged in and an alternative front page to your site for users who are already logged in.
 
 3. Allows you to have a FULL front page - i.e. completely different layout to your main drupal site or a THEMED full page, i.e. it loads with your default drupal site theme & layout.
 
-4. Allows you to automatically REDIRECT logged in users to a specific page or path.
+4. Allows you to automatically REDIRECT users to a specific page or path.
 
-######### (update Feb. 15th 2005) #########
+5. You can include PHP/HTML or both in your frontpage
 
-5. Updated with a PHP checkbox that allows drupal site administrators to include PHP in their front page(s). (Thanks Scott!)
+
+######### (update Sept. 10th 2005) #########
+
+6. Updated to allow you to override the HOME links on your site including the breadcrumb HOME links. 
+   Useful if you have a splash page or flash intro on your site and when people click on HOME from within
+   your site they don't go back to that.
 
 ############################################
 
@@ -40,18 +43,13 @@ Installation:
 
 5. Go to ADMINISTER - SETTINGS - FRONT_PAGE
 
-6. Paste in the HTML contents of your front pages. If your front page is going to be the same for both logged in and not-logged in users, simply paste the HTML content into both areas displayed.
+6. Paste in the HTML contents of your front pages. 
 
-7. Go to ADMINISTER - SETTINGS
+7. To test your front_pages, use the following link http://www.example.com/?q=front_page
 
-8. Set your DEFAULT PAGE to be front_page
+8. Once you are happy with your front_pages, set the DEFAULT FRONT page admin/settings/front_page to point to front_page*
 
-9. go to ADMINISTER - USERS - CONFIGURE - PERMISSIONS to toggle the ACCESS FRONT_PAGE setting*
-
-(* IMPORTANT: this sets access to front_page for anonymous user and authenticated user so the users can view them.)
-
-
-
+*you may also change that under admin/settings.
 
 Hope you find it useful. 
 
