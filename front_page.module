@@ -77,7 +77,7 @@ function front_page_settings() {
   
   $group = form_textfield(t('Default Front page'), 'site_frontpage', variable_get('site_frontpage', 'node'), 70, 70, t('Once you are happy how your front_pages for anonymous and authenticated users <a href="front_page">look</a> change your default front page setting to <em>front_page</em>. Don\'t forget to set the correct admin/access permissions in'));
   $group .= form_checkbox(t('Redirect your site HOME links'), 'front_page_breadcrumb', 1, variable_get('front_page_breadcrumb',0), t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link) when they are in your site instead of bringing them back to your front_page. Useful if you are using this module to specify a special splash page or flash intro to your site.'));
-  $group .= form_textfield(t('Redirect your site HOME links to'), 'front_page_breadcrumb_redirect', variable_get('front_page_breadcrumb_redirect', 'node'), 70, 70, t('Specify where the user should be redirected to. An example would be <em>node/12</em>.'));
+  $group .= form_textfield(t('Redirect your site HOME links to'), 'front_page_breadcrumb_redirect', variable_get('front_page_breadcrumb_redirect', 'node'), 70, 70, t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Clear the field if the HOME link override is not being used'));
   $output .= form_group(t('Site Settings'),$group);
   
   return $output;
