@@ -75,9 +75,9 @@ function front_page_settings() {
   $group .= form_checkbox(t('Allow embedded PHP code in front page for authenticated users'), 'front_page_php_yes', 1, variable_get('front_page_php_yes',0), t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.'));
   $output .= form_group(t('Authenticated users (logged in)'),$group);
   
-  $group = form_textfield(t('Default Front page'), 'site_frontpage', variable_get('site_frontpage', 'node'), 70, 70, t('Once you are happy how your front_pages for anonymous and authenticated users <a href="front_page">look</a> change your default front page setting to <em>front_page</em>. Don\'t forget to set the correct admin/access permissions in'));
-  $group .= form_checkbox(t('Redirect your site HOME links'), 'front_page_breadcrumb', 1, variable_get('front_page_breadcrumb',0), t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link) when they are in your site instead of bringing them back to your front_page. Useful if you are using this module to specify a special splash page or flash intro to your site.'));
-  $group .= form_textfield(t('Redirect your site HOME links to'), 'front_page_breadcrumb_redirect', variable_get('front_page_breadcrumb_redirect', 'node'), 70, 70, t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Clear the field if the HOME LINKS REDIRECT is not being used'));
+  $group = form_textfield(t('Default Front page'), 'site_frontpage', variable_get('site_frontpage', 'node'), 70, 70, t('Once you are happy how your pages <a href="front_page">look</a> change your default front page setting to <em>front_page</em>.'));
+  $group .= form_checkbox(t('Redirect your site HOME links'), 'front_page_breadcrumb', 1, variable_get('front_page_breadcrumb',0), t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link).'));
+  $group .= form_textfield(t('Redirect your site HOME links to'), 'front_page_breadcrumb_redirect', variable_get('front_page_breadcrumb_redirect', 'node'), 70, 70, t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'));
   $output .= form_group(t('Site Settings'),$group);
   
   return $output;
