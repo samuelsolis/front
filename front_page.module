@@ -2,11 +2,11 @@
 // $Id$ 
 
 /** 
- * @file 
+ *  
  * This module allows the user to set a custom front page
  * to the Drupal installation.
  * 
- * This module works with Drupal 4.5.x and Drupal 4.6.x
+ * This version works with Drupal CVS and will not work with Drupal 4.5 or Drupal 4.6
  *
  *
  * This module was developed by various members of the drupal community
@@ -29,6 +29,9 @@ function front_page_help($section) {
     case 'admin/modules#description': 
       // This description is shown in the listing at admin/modules. 
       return t('Allows you to setup custom front pages for your site. After enabling this module, click on %link to setup your custom front pages.', array('%link'=>l('admin/settings/front_page', 'admin/settings/front_page'))); 
+       case 'admin/settings/front_page': 
+      // This description is shown in the listing at admin/modules. 
+      return t('<P>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.'); 
   } 
 } 
 
@@ -61,26 +64,27 @@ function front_page_menu($may_cache) {
  */ 
 
 function front_page_settings() {
-  $output = '';
 
-  $group  = form_textarea(t("Front page HTML or TEXT for users not logged in"), "front_page_text", variable_get("front_page_text", ""), 60, 10, t("Paste your HTML here for users or visitors to your site who are not logged in"));
-  $group .= form_select(t('Select whether you want this page to be a THEMED or FULL front_page or if you want to REDIRECT the user to another page/path'), 'front_page_size', variable_get('front_page_size', themed), drupal_map_assoc(array(themed, full, redirect)), t('A THEMED front_page means your default layout, theme and stylesheet will be loaded with your custom front_page. A FULL front_page allows you to have a completely different layout, style sheet etc. Useful if you want to use a FLASH based front-end to your site or a splash-page.<br>'));
-  $group .= form_textfield(t('Redirect to'), 'front_page_anon_redirect', variable_get('front_page_anon_redirect', 'node'), 70, 70, t('If you have selected REDIRECT you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'));
-  $group .= form_checkbox(t('Allow embedded PHP code in front page for anonymous users'), 'front_page_php', 1, variable_get('front_page_php',0), t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.'));
-  $output .= form_group(t('Anonymous users (not logged in)'),$group);
+  $form['anon'] = array('#type' => 'fieldset','#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Front Page settings for Anonymous Users (visitors not logged in)'),);
+  $form['anon']['front_page_text'] = array('#type' => 'textarea', '#title' => t('Body'), '#default_value' => variable_get('front_page_text', ''), '#cols' => 60, '#rows' => 20, '#description' => t('Paste your HTML or TEXT here for visitors to your site who are not logged in. <br><br>You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'));
+  $form['anon']['front_page_size'] = array('#type' => 'select', '#title' => t('Select type'), '#default_value' => variable_get('front_page_size','themed'), '#options' => array('themed' => t('themed'), 'full' => t('full'), 'redirect' => t('redirect'),), '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc. Useful if you want to use a FLASH based front-end to your site or a splash-page for a pay-per-view website.<br><strong>REDIRECT</strong> will automatically redirect visitors not logged in to a specific page specified in the REDIRECT TO box.</p>'),);
+  $form['anon']['front_page_anon_redirect'] = array('#type' => 'textfield', '#title' => t('Redirect to'), '#default_value' => variable_get('front_page_anon_redirect', 'node'), '#cols' => 20, '#rows' => 1, '#description' => t('If you have selected <strong>REDIRECT</strong> you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'));  
+  $form['anon']['front_page_php'] = array('#type' => 'checkbox', '#title' => t('Allow embedded PHP code in front page for anonymous users'), '#return_value' => 1, '#default_value' => variable_get('front_page_php',0), '#description' => t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.')); 
 
-  $group = form_textarea(t("Front page HTML or TEXT for logged in users"), "front_page_text_yes", variable_get("front_page_text_yes", ""), 60, 10, t("Paste your HTML here for users you are already logged in"));
-  $group .= form_select(t('Select whether you want a THEMED/FULL/REDIRECT front_page or display the SAME content used for Anonymous Users (not logged in)'), 'front_page2_size', variable_get('front_page2_size', themed), drupal_map_assoc(array(themed, full, redirect, same)), t(''));
-  $group .= form_textfield(t('Redirect to'), 'front_page_redirect', variable_get('front_page_redirect', 'node'), 70, 70, t('If you have selected REDIRECT you need to specify where the user should be pointed to. Do not redirect anonymous & authenticated users to the same page.'));
-  $group .= form_checkbox(t('Allow embedded PHP code in front page for authenticated users'), 'front_page_php_yes', 1, variable_get('front_page_php_yes',0), t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.'));
-  $output .= form_group(t('Authenticated users (logged in)'),$group);
+  $form['authenticated'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Front Page settings for Authenticated Users (visitors already logged in)'));
+  $form['authenticated']['front_page_text_yes'] = array('#type' => 'textarea', '#title' => t('Body'), '#default_value' => variable_get('front_page_text_yes', ''), '#cols' => 60, '#rows' => 20, '#description' => t('Paste your HTML or TEXT here for visitors to your site who are already logged in. <br><br>You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'));
+  $form['authenticated']['front_page2_size'] = array('#type' => 'select', '#title' => t('Select type'), '#default_value' => variable_get('front_page2_size','themed'), '#options' => array('themed' => t('themed'), 'full' => t('full'), 'redirect' => t('redirect'),'same' => t('same'),), '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.<br><strong>SAME</strong> will display the same content as for Anonymous (not logged in) users.</p>'),);
+  $form['authenticated']['front_page_redirect'] = array('#type' => 'textfield', '#title' => t('Redirect to'), '#default_value' => variable_get('front_page_redirect', 'node'), '#cols' => 20, '#rows' => 1, '#description' => t('If you have selected <strong>REDIRECT</strong> you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'));  
+  $form['authenticated']['front_page_php_yes'] = array('#type' => 'checkbox', '#title' => t('Allow embedded PHP code in front page for anonymous users'), '#return_value' => 1, '#default_value' => variable_get('front_page_php_yes',0), '#description' => t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.')); 
+
+  $form['override'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Override your HOME breadcrumb links'));
+  $form['override']['front_page_breadcrumb'] = array('#type' => 'checkbox', '#title' => t('Redirect your site HOME links'), '#return_value' => 1, '#default_value' => variable_get('front_page_breadcrumb',0), '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')); 
+  $form['override']['front_page_breadcrumb_redirect'] = array('#type' => 'textfield', '#title' => t('Redirect your site HOME links to'), '#default_value' => variable_get('front_page_breadcrumb_redirect', ''), '#cols' => 20, '#rows' => 1, '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'));  
+
   
-  $group = form_textfield(t('Default Front page'), 'site_frontpage', variable_get('site_frontpage', 'node'), 70, 70, t('Once you are happy how your pages <a href="front_page">look</a> change your default front page setting to <em>front_page</em>.'));
-  $group .= form_checkbox(t('Redirect your site HOME links'), 'front_page_breadcrumb', 1, variable_get('front_page_breadcrumb',0), t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link).'));
-  $group .= form_textfield(t('Redirect your site HOME links to'), 'front_page_breadcrumb_redirect', variable_get('front_page_breadcrumb_redirect', 'node'), 70, 70, t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'));
-  $output .= form_group(t('Site Settings'),$group);
-  
-  return $output;
+  $form['site'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => FALSE, '#title' => t('Activate your front_page settings'));
+  $form['site']['site_frontpage'] = array('#type' => 'textfield', '#title' => t('Default Front page'), '#default_value' => variable_get('site_frontpage', 'node'), '#cols' => 20, '#rows' => 1, '#description' => t('Once you are happy how your pages <a href="front_page">look</a> change your default front page setting from <em>node</em> to <em>front_page</em>.'));  
+  return $form; 
 
 }
 
