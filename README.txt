@@ -7,7 +7,7 @@ This module is for people who want a custom front page to their Drupal sites.
 The key functionality of this module is outlined below. I recommend drupal site administrators 
 look at SECTIONS.MODULE if you are looking to vary the theme/look of different sections of your site.
 
-This module is intended for Drupal version 4.5 and later versions.
+This module is intended for Drupal Version 4.7. It will not work with earlier versions.
 
 
 Key Functionality:

@@ -9,11 +9,11 @@ Current improvement ideas are as follows:
 
 This module is looking for new improvement ideas.
 
-Drop us an email at dub(at)m3m.eu.com if you have any ideas.
+Drop us an email at gus(at)modernmediamuse.com if you have any ideas.
 
 
 Hope you find it useful
 
 Dublin Drupaller
 
-dub@m3m.eu.com
+gus@modernmediamuse.com
