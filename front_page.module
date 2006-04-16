@@ -83,7 +83,7 @@ function front_page_settings() {
 
   
   $form['site'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => FALSE, '#title' => t('Activate your front_page settings'));
-  $form['site']['site_frontpage'] = array('#type' => 'textfield', '#title' => t('Default Front page'), '#default_value' => variable_get('site_frontpage', 'node'), '#cols' => 20, '#rows' => 1, '#description' => t('Once you are happy how your pages <a href="front_page">look</a> change your default front page setting from <em>node</em> to <em>front_page</em>.'));  
+  $form['site']['site_frontpage'] = array('#type' => 'textfield', '#title' => t('Default Front page'), '#default_value' => variable_get('site_frontpage', 'node'), '#cols' => 20, '#rows' => 1, '#description' => t('Once you are happy how your pages <a href="'. base_path() .'front_page">look</a> change your default front page setting from <em>node</em> to <em>front_page</em>.'));  
   return $form; 
 
 }
