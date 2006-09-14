@@ -56,6 +56,14 @@ Installation:
    or under ADMINISTER -> SETTINGS.
    
    
+############################################
+IMPORTANT NOTE FOR THOSE USING PATH.MODULE (URL ALIAS):
+Please ensure you have no other pages 
+setup with the URL ALIAS 'front_page' when
+installing the front_page.module which uses the
+'front_page' URL Alias by default.
+##############################################  
+   
    
 Uninstall:
 -------------
