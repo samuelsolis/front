@@ -35,6 +35,7 @@ main drupal site - or alternatively as a THEMED full page, i.e. it loads with yo
 
 
 Installation:
+---------------
 
 1. Upload front_page.module to your MODULES folder.
 
@@ -53,8 +54,19 @@ Installation:
 8. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page. 
    You can do this at the bottom of the front_page configuration page (ADMINISTER -> SETTINGS -> FRONT_PAGE)
    or under ADMINISTER -> SETTINGS.
-
    
+   
+   
+Uninstall:
+-------------
+
+1. Go to ADMINISTER -> SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
+
+2. Go to ADMINISTER -> MODULES and de-select the front_page.module from your list of modules.
+
+3. Using FTP or other file manager, remove the front_page.module file.
+
+  
 Hope you find it useful. 
 
 This module has been developed by a few members of the drupal community and we're always looking for ideas for improving it. Email me or post a message on the drupal.org site if you have any ideas on how we can improve the module. 
