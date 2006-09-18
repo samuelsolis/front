@@ -60,7 +60,15 @@ function front_page_menu($may_cache) {
       'callback' => 'front_page',
       'access' => TRUE,
       'type' => MENU_SUGGESTED_ITEM);
-  }  
+  $items[] = array(
+      'path' => 'admin/settings/front/uninstall',
+      'description' => t('This will uninstall the front page module.'),
+      'callback' => 'uninstall_front_page',
+      'type' => MENU_CALLBACK,
+      'access' => user_access('administer menu')
+      );
+      
+      }  
   return $items;
 }
 
@@ -117,7 +125,13 @@ function front_page_admin() {
   $form['special_notice']['special_notice_text'] = array('#type' => 'textarea', '#title' => t('Body'), '#default_value' => variable_get('special_notice_text', ''), '#cols' => 60, '#rows' => 10, '#description' => t('Paste your HTML or TEXT here. It will be displayed as a <em>mission</em> style notice on the front page.'));
  
   $form['override'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Override your HOME breadcrumb links'));
-  $form['override']['front_page_breadcrumb'] = array('#type' => 'checkbox', '#title' => t('Redirect your site HOME links'), '#return_value' => 1, '#default_value' => variable_get('front_page_breadcrumb',0), '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')); 
+  $form['override']['front_page_breadcrumb'] = array(
+    '#type' => 'checkbox', 
+    '#title' => t('Redirect your site HOME links'), 
+    '#return_value' => 1, 
+    '#default_value' => variable_get('front_page_breadcrumb',0), 
+    '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')
+    ); 
   $form['override']['front_page_breadcrumb_redirect'] = array(
     '#type' => 'textfield', 
     '#title' => t('Redirect your site HOME links to'), 
@@ -136,18 +150,47 @@ function front_page_admin() {
     '#description' => t('The home page displays content from this relative URL. If unsure, specify "node".'),
     '#field_prefix' => url(NULL, NULL, NULL, TRUE) . (variable_get('clean_url', 0) ? '' : '?q=')
   );
-  return system_settings_form($form);
+  
+  $form['uninstall_front_page'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Deactivate and uninstall the Front Page module'));
+  $form['uninstall_front_page']['#description'] = t('<p>Follow the steps below to deactivate and remove the front_page.module from your Drupal installation.</p><p><STRONG>STEP 1: </STRONG>!remove', array('!remove' => '<a href ="'. base_path() . 'admin/settings/front/uninstall" title="Click to remove all front page settings from your database">'. t('Remove all front_page settings from the database') .'</a></p><P><small>PLEASE NOTE: REMOVING THE FRONT PAGE SETTINGS FROM YOUR DATABASE CANNOT BE UNDONE<br>YOUR DEFAULT SITE FRONT PAGE WILL REVERT BACK TO THE SYSTEM DEFAULT (NODE)</small></p><P><STRONG>STEP 2:</strong> Once you have removed the front page settings from your database, you may safely delete the front page .module and .info files from your Drupal folder.</p>')
+  );
+    
+ return system_settings_form($form);
 }
 
+
 /** 
- * display the front page or redirect
- * 
- * this function loads up the front page and displays it 
+ * this function uninstalls the front page module 
  *
  */ 
 
+function uninstall_front_page(){
+      $roles = "";
+      $roles = user_roles();
+      foreach (element_children($roles) as $role) {
+        $rolename = $roles[$role];
+        variable_del('front_'. $role .'_text');// text settings
+        variable_del('front_'. $role .'_type');// type
+        variable_del('front_'. $role .'_redirect'); //redirect
+        variable_del('front_'. $role .'_php');// php filter
+      }
+      variable_del('front_page_breadcrumb',''); // home breadcrumb override switch
+      variable_del('front_page_breadcrumb_redirect','');// home override redirect
+      variable_del('special_notice_time',''); // special notice time
+      variable_del('special_notice_text','');// special notice text
+      
+      //reset some important site variables
+      variable_set('site_frontpage', 'node'); //reset the default front page for the site back to node
+      variable_set('uninstall_front_setting', '0');
+      drupal_set_message(t('All front page settings have been removed from your database. You may now proceed to delete the /front/ folder and files from your server.'));
+      drupal_goto('admin/settings/front');
+} 
  
 function front_page() {
+	
+
+	
+	
 	
 /* Set a default value for landing zone if no front_page variables are filled. If the module is turned on 
 *  but empty in certain areas then a redirection loop will occur. This default prevents this
