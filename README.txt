@@ -4,33 +4,40 @@ Introduction:
 
 This module is for people who want a custom front page to their Drupal sites.
 
-The key functionality of this module is outlined below. I recommend drupal site administrators 
-look at SECTIONS.MODULE if you are looking to vary the theme/look of different sections of your site.
+The key functionality of this module is outlined below. 
 
-This module is intended for Drupal Version 4.7. It will not work with earlier versions.
+If you are comfortable with theming using a mix of php/html, I recommend you check out the
+handbook pages I have added to Drupal.org which explains how a more advanced method of theming
+your front page. http://drupal.org/node/46017 
+
+This module is intended for Drupal Version 5.0 
+It will not work with earlier versions.
 
 
 Key Functionality:
 
-1. Allows you to specify a custom front page to your site for visitors who are not-logged in (Anonymous Users) 
-and an alternative front page to your site for users who are already logged in (Authenticatd Users).
+1. Allows you to specify a custom front page based on role type.
+
+e.g. For a musicians website, you could have a different front page for Drummers, Guitarists, Singers, Bass Players etc.
 
 3. Allows you to have a FULL front page or SPLASH page - a completely different layout to your 
 main drupal site - or alternatively as a THEMED full page, i.e. it loads with your default drupal site theme & layout.
 
-4. Allows you to automatically REDIRECT users to a specific page or path.
+4. Automatically REDIRECT users to a specific page or path.
 
-5. You can include PHP/HTML or both in your frontpage
+5. Disable your site for everyone but Administrators and display a custom "under maintenance" message.
 
+6. Display a custom "mission" style message for authenticated users who have not visited the site for a set period.
 
-######### (update Sept. 10th 2005) #########
+e.g. If you have had a significant update to the site, you might want to have a special notice for users who haven't 
+visited for 1 month, or 1 week etc.
 
-6. Updated to allow you to override the HOME links on your site including the breadcrumb HOME links. 
-   Useful if you have a splash page or flash intro on your site and when people click on HOME from within
-   your site they don't go back to that.
+7. Override your HOME and Breadcrumb links on your site.
 
-############################################
+e.g. you might have a splash front page that you don't want visitors already on your site returning to when they
+click on HOME.
 
+8. You can include PHP/HTML or both in your frontpage
 
 
 
@@ -49,9 +56,7 @@ Installation:
 
 6. Paste in the TEXT/HTML/PHP contents of your front pages. 
 
-7. To test your front_pages, use the following link http://www.example.com/?q=front_page
-
-8. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page. 
+7. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page. 
    You can do this at the bottom of the front_page configuration page (ADMINISTER -> SETTINGS -> FRONT_PAGE)
    or under ADMINISTER -> SETTINGS.
    
@@ -77,9 +82,13 @@ Uninstall:
   
 Hope you find it useful. 
 
-This module has been developed by a few members of the drupal community and we're always looking for ideas for improving it. Email me or post a message on the drupal.org site if you have any ideas on how we can improve the module. 
+This module has been developed by a few members of the drupal community and 
+we're always looking for ideas for improving it. 
+
+Email me or post a message on the drupal.org site if you have any ideas on 
+how we can improve the module. 
 
 Dublin Drupaller
 
 
-dub@m3m.eu.com
+gus@modernmediamuse.com
