@@ -183,6 +183,11 @@ function uninstall_front_page(){
       variable_set('site_frontpage', 'node'); //reset the default front page for the site back to node
       variable_set('uninstall_front_setting', '0');
       drupal_set_message(t('All front page settings have been removed from your database. You may now disable the module below and then delete the front page files from your server.'));
+      $module = 'front_page';
+      $status = '0';
+      module_disable($module); 
+      db_query("UPDATE {system} SET status = 0 WHERE name = '%s'", $module); 
+      drupal_set_installed_schema_version($module, SCHEMA_UNINSTALLED);
       drupal_goto('admin/settings/modules');
 } 
  
