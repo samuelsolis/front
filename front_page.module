@@ -247,8 +247,8 @@ if (variable_get('front_page_breadcrumb',0)) {
   * show this if the user is not logged in or if the authenticated user is to get the same output as 
   * anonymous users
   */
-    
-  if (!$user->uid || variable_get("front_2_type", "same") == "same" || variable_get("front_2_text", "") == "") {
+  $authenticated_user_text_setting = variable_get("front_2_text", "");
+  if (!$user->uid || variable_get("front_2_type", "same") == "same" || (empty($authenticated_user_text_setting))) {
     $output = variable_get("front_1_text", "drupal");
     
     /* if PHP code execution is allowed then use eval */
@@ -293,7 +293,7 @@ if (variable_get('front_page_breadcrumb',0)) {
 	    $fptype = variable_get("front_". $role_id ."_type", "drupal");//check whether it is a themed or full front page.
 	    switch ($fptype) {
         case "themed":
-		    print theme_page($output);
+		    print theme('page', $output);
 		    return;
 		
         case "full":
