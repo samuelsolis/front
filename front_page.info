@@ -1,3 +1,4 @@
 ; $Id$ 
 name = Front Page
 description = Allows site admins setup custom front pages for the site.
+package = Administration
