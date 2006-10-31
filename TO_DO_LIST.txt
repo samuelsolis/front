@@ -2,7 +2,7 @@ TO DO LIST:
 
 Current improvement ideas are as follows:
 
-1. Allow Drupal site administrators to preview their front pages om the settings page.
+1. Allow Drupal site administrators to preview their front pages on the settings page.
 
 This module is always looking for new improvement ideas.
 
