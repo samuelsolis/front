@@ -231,7 +231,7 @@ if (variable_get('front_page_breadcrumb',0)) {
   /* this is where the new front page by role stuff happens  */
   
   else if ($user->uid ){
-   $roles =""; //make sure the roles variable is clear
+   $roles = ""; //make sure the roles variable is clear
    $roles = user_roles(); //load up the user roles for the site
    krsort($roles); //reverse the order of role types so it checks the highest or more recent role type first.
    foreach ($roles as $role_id => $role_name) { // run through each role type starting at the most recent working backwards
