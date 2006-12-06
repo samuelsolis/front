@@ -48,7 +48,7 @@ function front_page_menu($may_cache) {
   $items = array();
   if ($may_cache) {
    $items[] = array('path' => 'admin/settings/front',
-      'title' => t('advanced front page settings'),
+      'title' => t('Advanced front page settings'),
       'description' => t('Specify a unique layout or splash page based on role type - override your HOME and breadcrumb links - display a custom mission style notice for users who haven\'t visited in a while - disable site and display a \'temporarily offline\' message.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => 'front_page_admin',
