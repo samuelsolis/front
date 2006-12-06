@@ -59,14 +59,6 @@ function front_page_menu($may_cache) {
       'callback' => 'front_page',
       'access' => TRUE,
       'type' => MENU_SUGGESTED_ITEM);
-  $items[] = array(
-      'path' => 'admin/settings/front/uninstall',
-      'description' => t('This will uninstall the front page module.'),
-      'callback' => 'uninstall_front_page',
-      'type' => MENU_CALLBACK,
-      'access' => user_access('administer menu')
-      );
-      
       }  
   return $items;
 }
@@ -150,46 +142,11 @@ function front_page_admin() {
     '#field_prefix' => url(NULL, NULL, NULL, TRUE) . (variable_get('clean_url', 0) ? '' : '?q=')
   );
   
-  $form['uninstall_front_page'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Deactivate and uninstall the Front Page module'));
-  $form['uninstall_front_page']['#description'] = t('<p>Follow the steps below to deactivate and remove the front_page.module from your Drupal installation.</p><p><STRONG>STEP 1: </STRONG>!remove', array('!remove' => '<a href ="'. base_path() . 'admin/settings/front/uninstall" title="Click to remove all front page settings from your database">'. t('Remove all front_page settings from the database') .'</a></p><P><small>PLEASE NOTE: REMOVING THE FRONT PAGE SETTINGS FROM YOUR DATABASE CANNOT BE UNDONE<br>YOUR DEFAULT SITE FRONT PAGE WILL REVERT BACK TO THE SYSTEM DEFAULT (NODE)</small></p><P><STRONG>STEP 2:</strong> Once you have removed the front page settings from your database, you may safely delete the <strong>front_page.module</strong> and <strong>front_page.info</strong> files from your Drupal folder.</p>')
-  );
     
  return system_settings_form($form);
 }
 
 
-/** 
- * this function uninstalls the front page module 
- *
- */ 
-
-function uninstall_front_page(){
-      $roles = "";
-      $roles = user_roles();
-      foreach (element_children($roles) as $role) {
-        $rolename = $roles[$role];
-        variable_del('front_'. $role .'_text');// text settings
-        variable_del('front_'. $role .'_type');// type
-        variable_del('front_'. $role .'_redirect'); //redirect
-        variable_del('front_'. $role .'_php');// php filter
-      }
-      variable_del('front_page_breadcrumb',''); // home breadcrumb override switch
-      variable_del('front_page_breadcrumb_redirect','');// home override redirect
-      variable_del('special_notice_time',''); // special notice time
-      variable_del('special_notice_text','');// special notice text
-      
-      //reset some important site variables
-      variable_set('site_frontpage', 'node'); //reset the default front page for the site back to node
-      variable_set('uninstall_front_setting', '0');
-      drupal_set_message(t('All front page settings have been removed from your database. You may now disable the module below and then delete the front page files from your server.'));
-      $module = 'front_page';
-      $status = '0';
-      module_disable($module); 
-      db_query("UPDATE {system} SET status = 0 WHERE name = '%s'", $module); 
-      drupal_set_installed_schema_version($module, SCHEMA_UNINSTALLED);
-      drupal_goto('admin/settings/modules');
-} 
- 
 function front_page() {
 	
 
