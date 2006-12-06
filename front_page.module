@@ -15,7 +15,7 @@
  *
  * Updated September 18th with a front page by role type option by Dublin Drupaller
  *
- *   test50/admin/settings/front
+ *   
  */ 
 
 /** 
@@ -26,8 +26,7 @@ function front_page_help($section) {
   switch ($section) { 
     case 'admin/modules#description': 
       // This description is shown in the listing at admin/modules. 
-      return t('Allows you to setup custom front pages for your site. ( %link ).', array('%link'=>l('admin/settings/front_page', 'Front Page settings admin'))); 
-
+      return t('Allows you to setup custom front pages for your site.'); 
       case 'admin/settings/front': 
       $roles = "";
       $roles = user_roles();
@@ -50,7 +49,7 @@ function front_page_menu($may_cache) {
   $items = array();
   if ($may_cache) {
    $items[] = array('path' => 'admin/settings/front',
-      'title' => t('Advanced front page settings'),
+      'title' => t('advanced front page settings'),
       'description' => t('Specify a unique layout or splash page based on role type - override your HOME and breadcrumb links - display a custom mission style notice for users who haven\'t visited in a while - disable site and display a \'temporarily offline\' message.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => 'front_page_admin',
@@ -165,9 +164,7 @@ function front_page_admin() {
  *
  */ 
 
-
-
-function front_page_uninstall(){
+function uninstall_front_page(){
       $roles = "";
       $roles = user_roles();
       foreach (element_children($roles) as $role) {
@@ -185,13 +182,13 @@ function front_page_uninstall(){
       //reset some important site variables
       variable_set('site_frontpage', 'node'); //reset the default front page for the site back to node
       variable_set('uninstall_front_setting', '0');
-//      drupal_set_message(t('All front page settings have been removed from your database. You may now disable the module below and then delete the front page files from your server.'));
-//      $module = 'front_page';
-//      $status = '0';
-//      module_disable($module); 
-//      db_query("UPDATE {system} SET status = 0 WHERE name = '%s'", $module); 
-//      drupal_set_installed_schema_version($module, SCHEMA_UNINSTALLED);
-//      drupal_goto('admin/settings/modules');
+      drupal_set_message(t('All front page settings have been removed from your database. You may now disable the module below and then delete the front page files from your server.'));
+      $module = 'front_page';
+      $status = '0';
+      module_disable($module); 
+      db_query("UPDATE {system} SET status = 0 WHERE name = '%s'", $module); 
+      drupal_set_installed_schema_version($module, SCHEMA_UNINSTALLED);
+      drupal_goto('admin/settings/modules');
 } 
  
 function front_page() {
@@ -270,6 +267,7 @@ if (variable_get('front_page_breadcrumb',0)) {
 	  
 	case "redirect":
         $output = variable_get("front_1_redirect", "drupal");
+        drupal_goto($path = $output, $query = NULL, $fragment = NULL);
         break;
     }
   }
