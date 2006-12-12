@@ -55,13 +55,15 @@ function front_page_menu($may_cache) {
       'access' => user_access('administer menu'));
    $items[] = array(
       'path' => 'front_page',
-      'title' => t(''),
+      'title' => t('front page'),
       'callback' => 'front_page',
       'access' => TRUE,
       'type' => MENU_SUGGESTED_ITEM);
       }  
   return $items;
 }
+
+
 
 /** 
  * this function sets up the admin/build/front_page settings page
