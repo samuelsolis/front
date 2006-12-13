@@ -55,7 +55,7 @@ function front_page_menu($may_cache) {
       'access' => user_access('administer menu'));
    $items[] = array(
       'path' => 'front_page',
-      'title' => t('front page'),
+      'title' => t(''),
       'callback' => 'front_page',
       'access' => TRUE,
       'type' => MENU_SUGGESTED_ITEM);
