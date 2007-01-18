@@ -206,8 +206,10 @@ if (variable_get('front_page_breadcrumb',0)) {
   * anonymous users
   */
   $authenticated_user_text_setting = variable_get("front_2_text", "");
-  if (!$user->uid || variable_get("front_2_type", "same") == "same" || (empty($authenticated_user_text_setting))) {
-    $output = variable_get("front_1_text", "drupal");
+  if (!$user->uid || variable_get("front_2_type", "same") == "same" ) {
+  
+  /* if the user is not logged in or the authenticated user page is set to same */ 
+  $output = variable_get("front_1_text", "drupal");
     
     /* if PHP code execution is allowed then use eval */
     if (variable_get('front_1_php', 0)) {
@@ -229,13 +231,40 @@ if (variable_get('front_page_breadcrumb',0)) {
         break;
     }
   }
-  
-  /* this is where the new front page by role stuff happens  */
-  
-  else if ($user->uid ){
+   
+   
    $roles = ""; //make sure the roles variable is clear
    $roles = user_roles(); //load up the user roles for the site
    krsort($roles); //reverse the order of role types so it checks the highest or more recent role type first.
+   $siteroles = count($roles);
+   
+  if (($user->uid) && ($siteroles == 2)) {  
+  $output = variable_get("front_2_text", "drupal");
+    
+    /* if PHP code execution is allowed then use eval */
+    if (variable_get('front_2_php', 0)) {
+      $output = drupal_eval($output);
+    }
+	$fptype = variable_get("front_2_type", "drupal");
+	switch ($fptype) {
+        case "themed":
+		    print theme('page', $output);
+		    return;
+		
+        case "full":
+		    print $output;
+		    return;
+	  
+	case "redirect":
+        $output = variable_get("front_2_redirect", "drupal");
+        drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+        break;
+    }
+  }
+  
+  /* this is where the new front page by role stuff happens  */
+  
+   if (($user->uid) && ($siteroles != 2)) { //if the user is logged in and has another role besides authenticated user
    foreach ($roles as $role_id => $role_name) { // run through each role type starting at the most recent working backwards
      if ((array_key_exists($role_id, $user->roles)) && (trim(variable_get("front_". $role_id ."_text", "")) != "")){ // if the current visitor has a role type that matches and if the front page setting for that role type is not empty.
        if ((variable_get("special_notice_text", "") != "") && ($user->access < $check_time)){
@@ -268,4 +297,4 @@ if (variable_get('front_page_breadcrumb',0)) {
     }
    }
   }
- }
+}
