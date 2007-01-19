@@ -266,7 +266,7 @@ if (variable_get('front_page_breadcrumb',0)) {
   
    if (($user->uid) && ($siteroles != 2)) { //if the user is logged in and has another role besides authenticated user
    foreach ($roles as $role_id => $role_name) { // run through each role type starting at the most recent working backwards
-     if ((array_key_exists($role_id, $user->roles)) && (trim(variable_get("front_". $role_id ."_text", "")) != "")){ // if the current visitor has a role type that matches and if the front page setting for that role type is not empty.
+     if (array_key_exists($role_id, $user->roles)){ // if the current visitor has a role type that matches and if the front page setting for that role type is not empty.
        if ((variable_get("special_notice_text", "") != "") && ($user->access < $check_time)){
           $output = '<div id="mission">';
           $output .= variable_get("special_notice_text", "");
