@@ -2,14 +2,18 @@ TO DO LIST:
 
 Current improvement ideas are as follows:
 
-1. Allow Drupal site administrators to preview their front pages on the settings page.
+1. Allow Drupal site administrators to specify a specific front page based on ROLE types.
 
-This module is always looking for new improvement ideas.
+2. Allow different front pages for different sections.
 
-Drop me an email at gus(at)modernmediamuse.com if you have any ideas.
+
+This module is looking for new improvement ideas.
+
+Drop us an email at gus(at)modernmediamuse.com if you have any ideas.
 
 
 Hope you find it useful
 
 Dublin Drupaller
+
 gus@modernmediamuse.com
