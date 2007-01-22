@@ -1,6 +1,5 @@
 <?php
 // $Id$ 
-
 /** 
  *  
  * This module allows the site admin to set advanced front page settings.
@@ -16,7 +15,6 @@
  *
  *   
  */ 
-
 /** 
  * Implementation of hook_help(). 
  * 
@@ -62,14 +60,10 @@ function front_page_menu($may_cache) {
       }  
   return $items;
 }
-
-
-
 /** 
  * this function sets up the admin/build/front_page settings page
  * 
  */ 
-
 function front_page_admin() {
  // Load any existing settings and build the by redirect by role form
   $form['byrole'] = array('#type' => 'fieldset','#title' => t('Home pages'),'#description' => t('Designate a home page for each role. "Splash" pages will be used only when users are connecting from external sites. Spash pages must be in the form "node/x" where x is the id of a node, e.g., "node/21" (without the quotes). Only the body of the node will be displayed. Home pages are displayed when users follow internal home links, or for external links where there is no splash page designated, and may point to any page on the site.'),'#theme' => 'front_page_roles','#collapsible' => TRUE,'#tree' => TRUE);
@@ -93,7 +87,6 @@ function front_page_admin() {
     '#options' => array(t('Online'), t('Off-line')),
     '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user'))),
   );
-
   $form['front_offline']['site_offline_message'] = array(
     '#type' => 'textarea',
     '#title' => t('Site off-line message'),
@@ -147,11 +140,8 @@ function front_page_admin() {
     
  return system_settings_form($form);
 }
-
-
 function front_page() {
 	
-
 	
 	
 	
@@ -159,9 +149,7 @@ function front_page() {
 *  but empty in certain areas then a redirection loop will occur. This default prevents this
 */
 $output = 'node';
-
 /* Set the time to check against the last access of the user by the variable set in settings.*/
-
 switch(variable_get('front_special_notice_time','')){
 		case 'one day' :
 			$check_time = (time() -  (24 * 60 * 60));
@@ -184,7 +172,6 @@ switch(variable_get('front_special_notice_time','')){
 	}
 	
 //this checks to see if you are overriding HOME links on the site
-
 if (variable_get('front_page_breadcrumb',0)) {
 	  // This checks to see if the referer is an internal HOME link or not.
 	  $newhome =  variable_get('front_page_breadcrumb_redirect','node');
@@ -202,7 +189,7 @@ if (variable_get('front_page_breadcrumb',0)) {
   global $user;
   
   /*
-  * if the user is not logged
+  * if the user is not logged in
   */
   if (!$user->uid) {
   
