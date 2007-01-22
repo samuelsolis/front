@@ -1,70 +1,81 @@
 <?php
 // $Id$ 
+
 /** 
  *  
- * This module allows the site admin to set advanced front page settings.
+ * This module allows the user to set a custom front page
+ * to the Drupal installation.
  * 
- * This version works with Drupal 5.0 and will not work with earlier versions of Drupal
+ * This version works with Drupal 4.7 and will not work with Drupal 4.5 or Drupal 4.6
  *
- * This module was developed by Dublin Drupaller and various members of the drupal community
+ *
+ * This module was developed by various members of the drupal community
+ * and is maintained by Dublin Drupaller.
  * 
  * If you have any ideas/patches or requests, please post them on the drupal.org
  * site or email us at gus(at)modernmediamuse.com
  *
- * Updated December 6th with a fix for the redirects problem by Dublin Drupaller
+ *
+ * Updated January 22nd with a front page by role type option by Dublin Drupaller
  *
  *   
  */ 
+
 /** 
  * Implementation of hook_help(). 
  * 
+ * This is the explanatory text that appears in your administer - modules page 
+ * where you switch on/off modules
  */ 
 function front_page_help($section) { 
   switch ($section) { 
     case 'admin/modules#description': 
       // This description is shown in the listing at admin/modules. 
-      return t('Allows you to setup custom front pages for your site.'); 
-      case 'admin/settings/front': 
+      return t('Allows you to setup custom front pages for your site. After enabling this module, click on %link to setup your custom front pages.', array('%link'=>l('admin/settings/front_page', 'admin/settings/front_page'))); 
+       case 'admin/settings/front_page': 
+      // This description is shown in the listing at admin/modules and if there are more than 2 roles, a special note on how to use the front_page by role is displayed. 
       $roles = "";
       $roles = user_roles();
       if (count($roles) >= 3) {
       krsort($roles);
-      $special_note .= "<fieldset><legend>front page by role usage</legend><p><strong>Note:</strong>When using the front pages by role option, please note that if a user has multiple roles the first role match will determine which front page they see. Here is the order that the roles will be checked (from left to right).</p><p>";
+      $special_note .= "<h4>Note: Front_page by role & users with multiple roles</h4><P>If you are using the option to setup different front pages for each role and some of your users have multiple roles, here is the order that your visitor roles will be checked (from left to right).</p><p>";
         foreach ($roles as $role_id => $role_name) {
          $special_note .= "<strong>". $role_id ."</strong> ". $role_name ." |  ";
         }
-       $special_note .=  '</fieldset>';
       }
-      return t('<P>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><P><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>'. $special_note .'</p>'); 
-   } 
-}
+      return t('<P>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><P><em>Anonymous User</em> - visitor not logged in<br><em>Authenticated User</em> - visitor who is logged in</p>'. $special_note .'</p>'); 
+  } 
+} 
+
 /** 
  * this function sets the necessary paths etc. so drupal
  * knows where to find the front_page
+ * 
+ * in your Administer - Settings make sure default front page is set
+ * to front_page
+ * 
+ * Please note that I have left the Title blank below so nothing appears above the 
+ * page when it is displayed.
  */ 
 function front_page_menu($may_cache) {
-  $items = array();
   if ($may_cache) {
-   $items[] = array('path' => 'admin/settings/front',
-      'title' => t('Advanced front page settings'),
-      'description' => t('Specify a unique layout or splash page based on role type - override your HOME and breadcrumb links - display a custom mission style notice for users who haven\'t visited in a while - disable site and display a \'temporarily offline\' message.'),
-      'callback' => 'drupal_get_form',
-      'callback arguments' => 'front_page_admin',
-      'access' => user_access('administer menu'));
-   $items[] = array(
+    $items = array();
+    $items[] = array(
       'path' => 'front_page',
       'title' => t(''),
       'callback' => 'front_page',
       'access' => TRUE,
       'type' => MENU_SUGGESTED_ITEM);
-      }  
+  } 
   return $items;
 }
+
 /** 
- * this function sets up the admin/build/front_page settings page
+ * this function sets up the admin/settings/front_page settings page
  * 
  */ 
-function front_page_admin() {
+
+function front_page_settings() {
  // Load any existing settings and build the by redirect by role form
   $form['byrole'] = array('#type' => 'fieldset','#title' => t('Home pages'),'#description' => t('Designate a home page for each role. "Splash" pages will be used only when users are connecting from external sites. Spash pages must be in the form "node/x" where x is the id of a node, e.g., "node/21" (without the quotes). Only the body of the node will be displayed. Home pages are displayed when users follow internal home links, or for external links where there is no splash page designated, and may point to any page on the site.'),'#theme' => 'front_page_roles','#collapsible' => TRUE,'#tree' => TRUE);
 // build the form for roles
@@ -79,22 +90,8 @@ function front_page_admin() {
   $form[$role]['front_'. $role .'_php'] = array('#type' => 'checkbox', '#title' => t('Allow embedded PHP code in front page for authenticated users'), '#return_value' => 1, '#default_value' => variable_get('front_'. $role .'_php',0), '#description' => t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.')); 
   }  
  
- $form['front_offline'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Custom "Temporarily Offline" message and disable site for all except admins'));
- $form['front_offline']['site_offline'] = array(
-    '#type' => 'radios',
-    '#title' => t('Site maintenance'),
-    '#default_value' => variable_get('site_offline', 0),
-    '#options' => array(t('Online'), t('Off-line')),
-    '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user'))),
-  );
-  $form['front_offline']['site_offline_message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Site off-line message'),
-    '#default_value' => variable_get('site_offline_message', t('@site is currently under maintenance. We should be back shortly. Thank you for your patience.', array('@site' => variable_get('site_name', t('This Drupal site'))))),
-    '#description' => t('Message to show visitors when the site is in off-line mode.')
-  );
  
- $form['special_notice'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Custom mission for Authenticated Users who haven\'t visited the site for a set period'));
+ $form['special_notice'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Custom notice for Authenticated Users who haven\'t visited the site for a set period'));
  $form['special_notice']['special_notice_time'] = array(
 	  '#type' => 'select', 
 	  '#title' => t('Been away for'), 
@@ -109,46 +106,33 @@ function front_page_admin() {
 	  '#description' => t('<p>The length of time to check for when users see the special notice which will be displayed as a <em>mission</em> style notice on the front page.<p> '),
 	  );
   $form['special_notice']['special_notice_text'] = array('#type' => 'textarea', '#title' => t('Body'), '#default_value' => variable_get('special_notice_text', ''), '#cols' => 60, '#rows' => 10, '#description' => t('Paste your HTML or TEXT here. It will be displayed as a <em>mission</em> style notice on the front page.'));
- 
+   
+  
   $form['override'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Override your HOME breadcrumb links'));
-  $form['override']['front_page_breadcrumb'] = array(
-    '#type' => 'checkbox', 
-    '#title' => t('Redirect your site HOME links'), 
-    '#return_value' => 1, 
-    '#default_value' => variable_get('front_page_breadcrumb',0), 
-    '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')
-    ); 
-  $form['override']['front_page_breadcrumb_redirect'] = array(
-    '#type' => 'textfield', 
-    '#title' => t('Redirect your site HOME links to'), 
-    '#default_value' => variable_get('front_page_breadcrumb_redirect', ''), 
-    '#cols' => 20, '#rows' => 1, 
-    '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'),
-    '#field_prefix' => url(NULL, NULL, NULL, TRUE) . (variable_get('clean_url', 0) ? '' : '?q=')  
-  );
+  $form['override']['front_page_breadcrumb'] = array('#type' => 'checkbox', '#title' => t('Redirect your site HOME links'), '#return_value' => 1, '#default_value' => variable_get('front_page_breadcrumb',0), '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')); 
+  $form['override']['front_page_breadcrumb_redirect'] = array('#type' => 'textfield', '#title' => t('Redirect your site HOME links to'), '#default_value' => variable_get('front_page_breadcrumb_redirect', ''), '#cols' => 20, '#rows' => 1, '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'));  
+
   
   $form['site'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => FALSE, '#title' => t('Activate your front_page settings'));
-  $form['site']['site_frontpage'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Default front page'),
-    '#default_value' => variable_get('site_frontpage', 'node'),
-    '#size' => 40,
-    '#description' => t('Change this setting to <em>front_page</em> to activate your front page settings.'),
-    '#field_prefix' => url(NULL, NULL, NULL, TRUE) . (variable_get('clean_url', 0) ? '' : '?q=')
-  );
-  
-    
- return system_settings_form($form);
+  $form['site']['site_frontpage'] = array('#type'          => 'textfield', '#title'         => t('Default Front page'), '#default_value' => variable_get('site_frontpage', 'node'), '#cols'          => 20, '#rows'          => 1, '#description'   => t('Once you are happy how your pages <a href="%url">look</a> change your default front page setting from <em>%node</em> to <em>%front_page</em>.', array('%url' => base_path() . 'front_page', '%node' => 'node', '%front_page' => 'front_page')),);  
+  return $form; 
 }
+
+/** 
+ * print out the page
+ * 
+ * this function loads up the front page and displays it 
+ *
+ */ 
+
+ 
 function front_page() {
-	
-	
-	
 	
 /* Set a default value for landing zone if no front_page variables are filled. If the module is turned on 
 *  but empty in certain areas then a redirection loop will occur. This default prevents this
 */
 $output = 'node';
+
 /* Set the time to check against the last access of the user by the variable set in settings.*/
 switch(variable_get('front_special_notice_time','')){
 		case 'one day' :
