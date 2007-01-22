@@ -1,0 +1,9 @@
+; $Id$ 
+name = Front Page
+description = Allows site admins setup custom front pages for the site.
+package = Administration
+
+; Information added by drupal.org packaging script on 2007-01-20
+version = "5.x-3.1"
+project = "front"
+
