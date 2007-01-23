@@ -1,6 +1,5 @@
 <?php
 // $Id$ 
-
 /** 
  *  
  * This module allows the site admin to set advanced front page settings.
@@ -12,11 +11,10 @@
  * If you have any ideas/patches or requests, please post them on the drupal.org
  * site or email us at gus(at)modernmediamuse.com
  *
- * Updated December 6th with a fix for the redirects problem by Dublin Drupaller
+ * Updated January 22nd 2007
  *
  *   
  */ 
-
 /** 
  * Implementation of hook_help(). 
  * 
@@ -62,14 +60,10 @@ function front_page_menu($may_cache) {
       }  
   return $items;
 }
-
-
-
 /** 
  * this function sets up the admin/build/front_page settings page
  * 
  */ 
-
 function front_page_admin() {
  // Load any existing settings and build the by redirect by role form
   $form['byrole'] = array('#type' => 'fieldset','#title' => t('Home pages'),'#description' => t('Designate a home page for each role. "Splash" pages will be used only when users are connecting from external sites. Spash pages must be in the form "node/x" where x is the id of a node, e.g., "node/21" (without the quotes). Only the body of the node will be displayed. Home pages are displayed when users follow internal home links, or for external links where there is no splash page designated, and may point to any page on the site.'),'#theme' => 'front_page_roles','#collapsible' => TRUE,'#tree' => TRUE);
@@ -93,7 +87,6 @@ function front_page_admin() {
     '#options' => array(t('Online'), t('Off-line')),
     '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user'))),
   );
-
   $form['front_offline']['site_offline_message'] = array(
     '#type' => 'textarea',
     '#title' => t('Site off-line message'),
@@ -147,11 +140,8 @@ function front_page_admin() {
     
  return system_settings_form($form);
 }
-
-
 function front_page() {
 	
-
 	
 	
 	
@@ -159,9 +149,7 @@ function front_page() {
 *  but empty in certain areas then a redirection loop will occur. This default prevents this
 */
 $output = 'node';
-
 /* Set the time to check against the last access of the user by the variable set in settings.*/
-
 switch(variable_get('front_special_notice_time','')){
 		case 'one day' :
 			$check_time = (time() -  (24 * 60 * 60));
@@ -184,7 +172,6 @@ switch(variable_get('front_special_notice_time','')){
 	}
 	
 //this checks to see if you are overriding HOME links on the site
-
 if (variable_get('front_page_breadcrumb',0)) {
 	  // This checks to see if the referer is an internal HOME link or not.
 	  $newhome =  variable_get('front_page_breadcrumb_redirect','node');
@@ -202,7 +189,7 @@ if (variable_get('front_page_breadcrumb',0)) {
   global $user;
   
   /*
-  * if the user is not logged
+  * if the user is not logged in
   */
   if (!$user->uid) {
   
@@ -210,7 +197,7 @@ if (variable_get('front_page_breadcrumb',0)) {
   $output = variable_get("front_1_text", "drupal");
     
     /* if PHP code execution is allowed then use eval */
-    if (variable_get('front_1_php', 0)) {
+    if (variable_get("front_1_php", 0)) {
       $output = drupal_eval($output);
     }
 	$fptype = variable_get("front_1_type", "drupal");
@@ -223,7 +210,7 @@ if (variable_get('front_page_breadcrumb',0)) {
 		    print $output;
 		    return;
 	  
-	case "redirect":
+	      case "redirect":
         $output = variable_get("front_1_redirect", "drupal");
         drupal_goto($path = $output, $query = NULL, $fragment = NULL);
         break;
@@ -236,39 +223,9 @@ if (variable_get('front_page_breadcrumb',0)) {
    krsort($roles); //reverse the order of role types so it checks the highest or more recent role type first.
    $siteroles = count($roles);
      
-  /* if the user is logged in an the only role available is authenticated user */
-  if (($user->uid) && ($siteroles == 2)) {
-      if (variable_get("front_2_type", "same") == "same" ) {  
-        $output = variable_get("front_1_text", "drupal");
-      } 
-      else {
-      /* if the authenticated user page is not set to same */
-        $output = variable_get("front_2_text", "drupal");
-       }
-    /* if PHP code execution is allowed then use eval */
-    if (variable_get('front_2_php', 0)) {
-      $output = drupal_eval($output);
-    }
-	$fptype = variable_get("front_2_type", "drupal");
-	 switch ($fptype) {
-        case "themed":
-		    print theme('page', $output);
-		    return;
-		
-        case "full":
-		    print $output;
-		    return;
-	  
-	case "redirect":
-        $output = variable_get("front_2_redirect", "drupal");
-        drupal_goto($path = $output, $query = NULL, $fragment = NULL);
-        break;
-    }
-  }
+ /* this is where the new front page by role stuff happens  */
   
-  /* this is where the new front page by role stuff happens  */
-  
-   if (($user->uid) && ($siteroles != 2)) { //if the user is logged in and the site has more than 2 roles setup
+   if ($user->uid) { //if the user is logged in and the site has more than 2 roles setup
    foreach ($roles as $role_id => $role_name) { // run through each role type starting at the most recent working backwards
      if (array_key_exists($role_id, $user->roles)){ // if the current visitor has a role type that matches and if the front page setting for that role type is not empty.
        if ((variable_get("special_notice_text", "") != "") && ($user->access < $check_time)){
@@ -291,6 +248,28 @@ if (variable_get('front_page_breadcrumb',0)) {
         case "full":
 		    print $output;
 		    return;
+		    
+		    case "same": 
+		    $output = variable_get("front_1_text", "drupal");
+        /* if PHP code execution is allowed then use eval */
+        if (variable_get("front_1_php", 0)) {
+          $output = drupal_eval($output);
+         }
+	      $fptype = variable_get("front_1_type", "drupal");
+	        switch ($fptype) {
+          case "themed":
+		      print theme('page', $output);
+		      return;
+		
+          case "full":
+		      print $output;
+		      return;
+	  
+	        case "redirect":
+          $output = variable_get("front_1_redirect", "drupal");
+          drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+          break;
+         }
 	  
 	      case "redirect":
         $output = variable_get("front_". $role_id ."_redirect", "drupal");
