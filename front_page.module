@@ -16,7 +16,7 @@
  * site or email us at gus(at)modernmediamuse.com
  *
  *
- * Updated January 22nd with a front page by role type option by Dublin Drupaller
+ * Updated September 11th with a front page by role type option by Dublin Drupaller
  *
  *   
  */ 
@@ -220,7 +220,7 @@ if (variable_get('front_page_breadcrumb',0)) {
           }
          else {$output = variable_get("front_". $role_id ."_text", "");} 
       /* if PHP code execution is allowed then use eval */
-         if (variable_get('front_". $role_id ."_php', 0)) {
+         if (variable_get("front_". $role_id ."_php", 0)) {
           $output = drupal_eval($output);
          }
 	    $fptype = variable_get("front_". $role_id ."_type", "drupal");//check whether it is a themed or full front page.
