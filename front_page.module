@@ -33,7 +33,7 @@ function front_page_help($section) {
         foreach ($roles as $role_id => $role_name) {
          $special_note .= "<strong>". $role_id ."</strong> ". $role_name ." |  ";
         }
-       $special_note .=  '</fieldset>';
+       $special_note .=  '<p>The default setting for new roles is SAME AS AUTHENTICATED USERS.</p></fieldset>';
       }
       return t('<P>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><P><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>'. $special_note .'</p>'); 
    } 
