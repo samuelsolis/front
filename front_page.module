@@ -218,7 +218,7 @@ if (variable_get('front_page_breadcrumb',0)) {
   }
    
    
-   $roles = ""; //make sure the roles variable is clear
+    $roles = ""; //make sure the roles variable is clear
    $roles = user_roles(); //load up the user roles for the site
    krsort($roles); //reverse the order of role types so it checks the highest or more recent role type first.
    $siteroles = count($roles);
@@ -252,7 +252,7 @@ if (variable_get('front_page_breadcrumb',0)) {
 		    case "same": 
 		    $output = variable_get("front_1_text", "drupal");
         /* if PHP code execution is allowed then use eval */
-        if (variable_get("front_1_php", 0)) {
+        if (variable_get('front_1_php', 0)) {
           $output = drupal_eval($output);
          }
 	      $fptype = variable_get("front_1_type", "drupal");
@@ -270,6 +270,28 @@ if (variable_get('front_page_breadcrumb',0)) {
           drupal_goto($path = $output, $query = NULL, $fragment = NULL);
           break;
          }
+         
+          case "sameasauth": 
+		    $output = variable_get("front_2_text", "drupal");
+        /* if PHP code execution is allowed then use eval */
+        if (variable_get("front_2_php", 0)) {
+          $output = drupal_eval($output);
+         }
+	      $fptype = variable_get("front_2_type", "drupal");
+	        switch ($fptype) {
+          case "themed":
+		      print theme('page', $output);
+		      return;
+		
+          case "full":
+		      print $output;
+		      return;
+	  
+	        case "redirect":
+          $output = variable_get("front_2_redirect", "drupal");
+          drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+          break;
+         }
 	  
 	      case "redirect":
         $output = variable_get("front_". $role_id ."_redirect", "drupal");
@@ -281,3 +303,4 @@ if (variable_get('front_page_breadcrumb',0)) {
    }
   }
 }
+
