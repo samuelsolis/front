@@ -93,34 +93,51 @@ function front_page_admin() {
       '#description' => t('Paste your HTML or TEXT here for visitors to your site who are already logged in. <br><br>You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'),
     );
     
-    if ($role > 2) {
-      $form[$role]['front_'. $role .'_type'] = array(
-        '#type' => 'select', 
-        '#title' => t('Select type'),
-        '#default_value' => variable_get('front_'. $role .'_type', 'sameasauth'),
-        '#options' => array(
-          'themed' => t('themed'),
-          'full' => t('full'),
-          'redirect' => t('redirect'),
-          'sameasauth' => t('same as authenticated users'),
-        ),
-        '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.<br><strong>SAME AS AUTHENTICATED</strong> will display the same content as for Authenticated (logged in) users.</p>'),
-      );
-    }
-    else {
-      $form[$role]['front_'. $role .'_type'] = array(
-        '#type' => 'select',
-        '#title' => t('Select type'),
-        '#default_value' => variable_get('front_'. $role .'_type', 'themed'),
-        '#options' => array(
-          'themed' => t('themed'),
-          'full' => t('full'),
-          'redirect' => t('redirect'),
-        ),
-        '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.</p>'),
-      );
+    // Set the type options common for all roles.
+    $options = array(
+      'themed' => t('themed'),
+      'full' => t('full'),
+      'redirect' => t('redirect'),
+    );
+    
+    // Set the description common for all roles.
+    $description = '<dl><dt>'. t('themed') .'</dt>
+      <dd>'. t('means your default layout, theme and stylesheet will be loaded with your custom front_page.') .'</dd></dl>';
+    $description .= '<dl><dt>'. t('full') .'</dt>
+      <dd>'. t('allows you to have a completely different layout, style sheet etc.') .'</dd></dl>';
+    $description .= '<dl><dt>'. t('redirect') .'</dt>
+      <dd>'. t('will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.') .'</dd></dl>';
+   
+    // Set the options that varies from role to role.
+    switch ($role) {
+      case 1: // Anonymous user
+        $default_value =  variable_get('front_1_type', 'themed');
+        break;
+      case 2: // Authenticated user
+        $default_value =  variable_get('front_2_type', 'same_as_anon');
+        $options['same_as_anon'] = t('same as anonymous users'); 
+        $description .= '<dl><dt>'. t('same as anonymous users') .'</dt>
+          <dd>'. t('will display the same content as for Anonymous users.') .'</dd></dl>';
+        break;
+      default: // Other roles
+        $default_value =  variable_get('front_'. $role .'_type', 'same_as_anon');
+        $options['same_as_anon'] = t('same as anonymous users'); 
+        $options['sameasauth'] = t('same as authenticated users');
+        $description .= '<dl><dt>'. t('same as anonymous users') .'</dt>
+          <dd>'. t('will display the same content as for Anonymous users.') .'</dd></dl>';
+        $description .= '<dl><dt>'. t('same as authenticated users') .'</dt>
+          <dd>'. t('will display the same content as for Authenticated (logged in) users.') .'</dd></dl>';
+        break;
     }
     
+    $form[$role]['front_'. $role .'_type'] = array(
+      '#type' => 'select', 
+      '#title' => t('Select type'),
+      '#default_value' => $default_value,
+      '#options' => $options,
+      '#description' => '<p>'. $description .'</p>',
+    );
+      
     $form[$role]['front_'. $role .'_redirect'] = array(
       '#type' => 'textfield',
       '#title' => t('Redirect to'),
@@ -341,7 +358,7 @@ function front_page() {
             print $output;
             return;
             
-          case "same": 
+          case 'same_as_anon': 
             $output = variable_get("front_1_text", "drupal");
             // If PHP code execution is allowed then use eval.
             if (variable_get('front_1_php', 0)) {
