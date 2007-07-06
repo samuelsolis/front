@@ -26,7 +26,7 @@ function front_page_help($section) {
       $special_note = '';
       if (count($roles) >= 3) {
         krsort($roles);
-        $special_note = t('<fieldset><legend>front page by role usage</legend><p><strong>Note:</strong>When using the front pages by role option, please note that if a user has multiple roles the first role match will determine which front page they see. Here is the order that the roles will be checked (from left to right).</p>') .'<p>';
+        $special_note = '<fieldset>'. t('<legend>front page by role usage</legend><p><strong>Note:</strong>When using the front pages by role option, please note that if a user has multiple roles the first role match will determine which front page they see. Here is the order that the roles will be checked (from left to right).</p>') .'<p>';
         foreach ($roles as $role_id => $role_name) {
           $special_note .= "<strong>". $role_id ."</strong> ". $role_name ." |  ";
         }
