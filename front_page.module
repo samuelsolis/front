@@ -97,7 +97,7 @@ function front_page_admin() {
       $form[$role]['front_'. $role .'_type'] = array(
         '#type' => 'select', 
         '#title' => t('Select type'),
-        '#default_value' => variable_get('front_'. $role .'_type','sameasauth'),
+        '#default_value' => variable_get('front_'. $role .'_type', 'sameasauth'),
         '#options' => array(
           'themed' => t('themed'),
           'full' => t('full'),
@@ -111,7 +111,7 @@ function front_page_admin() {
       $form[$role]['front_'. $role .'_type'] = array(
         '#type' => 'select',
         '#title' => t('Select type'),
-        '#default_value' => variable_get('front_'. $role .'_type','themed'),
+        '#default_value' => variable_get('front_'. $role .'_type', 'themed'),
         '#options' => array(
           'themed' => t('themed'),
           'full' => t('full'),
@@ -233,167 +233,166 @@ function front_page_admin() {
     
  return system_settings_form($form);
 }
+
+
+/***********************************************
+ * Function to handle the display of the front page.
+ ***********************************************/
 function front_page() {
-	
-	
-	
-	
-/* Set a default value for landing zone if no front_page variables are filled. If the module is turned on 
-*  but empty in certain areas then a redirection loop will occur. This default prevents this
-*/
-$output = 'node';
-/* Set the time to check against the last access of the user by the variable set in settings.*/
-switch(variable_get('front_special_notice_time','')){
-		case 'one day' :
-			$check_time = (time() -  (24 * 60 * 60));
-			break;
-		case 'one week' :
-			$check_time =(time() -  (7 * 24 * 60 * 60));
-			break;
-		case 'one month' :
-			$check_time =(time() -  (30 * 24 * 60 * 60));
-			break;
-		case 'three months' :
-			$check_time =(time() -  (90 * 24 * 60 * 60));
-			break;
-		case 'six months' :
-			$check_time =(time() -  (180 * 24 * 60 * 60));
-			break;
-		case 'one year' :
-			$check_time =(time() -  (360 * 24 * 60 * 60));
-			break;
-	}
-	
-//this checks to see if you are overriding HOME links on the site
-if (variable_get('front_page_breadcrumb',0)) {
-	  // This checks to see if the referer is an internal HOME link or not.
-	  $newhome =  variable_get('front_page_breadcrumb_redirect','node');
-	  $ref = $_SERVER["HTTP_REFERER"];
-	  global $user, $base_url;
-	  $parsed_url=parse_url($base_url);
-	  $domain = $parsed_url['host'];
-	  if (stristr($ref, $domain)) {
-		  drupal_goto($path = $newhome, $query = NULL, $fragment = NULL);
-	  }
- }
+  // Set a default value for landing zone if no front_page variables are filled. 
+  // If the module is turned on but empty in certain areas then a redirection loop will occur. 
+  // Defaulting to 'node' prevents this. 
+  $output = 'node';
+  
+  // Set the time to check against the last access of the user by the variable set in settings.
+  switch(variable_get('front_special_notice_time','')){
+    case 'one day' :
+      $check_time = (time() -  (24 * 60 * 60));
+      break;
+    case 'one week' :
+      $check_time =(time() -  (7 * 24 * 60 * 60));
+      break;
+    case 'one month' :
+      $check_time =(time() -  (30 * 24 * 60 * 60));
+      break;
+    case 'three months' :
+      $check_time =(time() -  (90 * 24 * 60 * 60));
+      break;
+    case 'six months' :
+      $check_time =(time() -  (180 * 24 * 60 * 60));
+      break;
+    case 'one year' :
+      $check_time =(time() -  (360 * 24 * 60 * 60));
+      break;
+  }
+
+  //this checks to see if you are overriding HOME links on the site
+  if (variable_get('front_page_breadcrumb',0)) {
+    // This checks to see if the referer is an internal HOME link or not.
+    $newhome =  variable_get('front_page_breadcrumb_redirect','node');
+    $ref = $_SERVER["HTTP_REFERER"];
+    global $user, $base_url;
+    $parsed_url=parse_url($base_url);
+    $domain = $parsed_url['host'];
+    if (stristr($ref, $domain)) {
+      drupal_goto($path = $newhome, $query = NULL, $fragment = NULL);
+    }
+  }
   			
   // the following is the code that loads the front_page settings
-  
   global $user;
   
-  /*
-  * if the user is not logged in
-  */
+  // if the user is not logged in load up the page for anonymous users  
   if (!$user->uid) {
-  
-  /* if the user is not logged in load up the page for anonymous users */ 
-  $output = variable_get("front_1_text", "drupal");
+    $output = variable_get("front_1_text", "drupal");
     
-    /* if PHP code execution is allowed then use eval */
+    // If PHP code execution is allowed then use eval.
     if (variable_get("front_1_php", 0)) {
       $output = drupal_eval($output);
     }
-	$fptype = variable_get("front_1_type", "drupal");
-	switch ($fptype) {
-        case "themed":
-		    print theme('page', $output);
-		    return;
-		
-        case "full":
-		    print $output;
-		    return;
-	  
-	      case "redirect":
+    $fptype = variable_get("front_1_type", "drupal");
+    switch ($fptype) {
+      case "themed":
+        print theme('page', $output);
+        return;
+        
+      case "full":
+        print $output;
+        return;
+        
+      case "redirect":
         $output = variable_get("front_1_redirect", "drupal");
         drupal_goto($path = $output, $query = NULL, $fragment = NULL);
-        break;
+      break;
     }
   }
    
    
-    $roles = ""; //make sure the roles variable is clear
-   $roles = user_roles(); //load up the user roles for the site
-   krsort($roles); //reverse the order of role types so it checks the highest or more recent role type first.
-   $siteroles = count($roles);
+  $roles = ""; //make sure the roles variable is clear
+  $roles = user_roles(); //load up the user roles for the site
+  krsort($roles); //reverse the order of role types so it checks the highest or more recent role type first.
+  $siteroles = count($roles);
      
- /* this is where the new front page by role stuff happens  */
-  
-   if ($user->uid) { //if the user is logged in and the site has more than 2 roles setup
-   foreach ($roles as $role_id => $role_name) { // run through each role type starting at the most recent working backwards
-     if (array_key_exists($role_id, $user->roles)){ // if the current visitor has a role type that matches and if the front page setting for that role type is not empty.
-       if ((variable_get("special_notice_text", "") != "") && ($user->access < $check_time)){
+  /* this is where the front page by role stuff happens  */
+  if ($user->uid) { //if the user is logged in and the site has more than 2 roles setup
+    foreach ($roles as $role_id => $role_name) { // run through each role type starting at the most recent working backwards
+      // if the current visitor has a role type that matches and if the front page setting for that role type is not empty.
+      if (array_key_exists($role_id, $user->roles)) { 
+        if ((variable_get("special_notice_text", "") != "") && ($user->access < $check_time)) {
           $output = '<div id="mission">';
           $output .= variable_get("special_notice_text", "");
           $output .= '</div>';
           $output .= variable_get("front_". $role_id ."_text", "");
-          }
-         else {$output = variable_get("front_". $role_id ."_text", "");} 
-      /* if PHP code execution is allowed then use eval */
-         if (variable_get("front_". $role_id ."_php", 0)) {
+        }
+        else {
+          $output = variable_get("front_". $role_id ."_text", "");
+        }      
+        // if PHP code execution is allowed then use eval 
+        if (variable_get("front_". $role_id ."_php", 0)) {
           $output = drupal_eval($output);
-         }
-	    $fptype = variable_get("front_". $role_id ."_type", "drupal");//check whether it is a themed or full front page.
-	    switch ($fptype) {
-        case "themed":
-		    print theme('page', $output);
-		    return;
-		
-        case "full":
-		    print $output;
-		    return;
-		    
-		    case "same": 
-		    $output = variable_get("front_1_text", "drupal");
-        /* if PHP code execution is allowed then use eval */
-        if (variable_get('front_1_php', 0)) {
-          $output = drupal_eval($output);
-         }
-	      $fptype = variable_get("front_1_type", "drupal");
-	        switch ($fptype) {
+        }
+  	    $fptype = variable_get("front_". $role_id ."_type", "drupal"); //check whether it is a themed or full front page.
+        switch ($fptype) {
           case "themed":
-		      print theme('page', $output);
-		      return;
-		
+            print theme('page', $output);
+            return;
+            
           case "full":
-		      print $output;
-		      return;
-	  
-	        case "redirect":
-          $output = variable_get("front_1_redirect", "drupal");
-          drupal_goto($path = $output, $query = NULL, $fragment = NULL);
-          break;
-         }
-         
+            print $output;
+            return;
+            
+          case "same": 
+            $output = variable_get("front_1_text", "drupal");
+            // If PHP code execution is allowed then use eval.
+            if (variable_get('front_1_php', 0)) {
+              $output = drupal_eval($output);
+            }
+            $fptype = variable_get("front_1_type", "drupal");
+            switch ($fptype) {
+              case "themed":
+                print theme('page', $output);
+                return;
+              
+              case "full":
+                print $output;
+                return;
+                
+              case "redirect":
+                $output = variable_get("front_1_redirect", "drupal");
+                drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+              break;
+            }
+            
           case "sameasauth": 
-		    $output = variable_get("front_2_text", "drupal");
-        /* if PHP code execution is allowed then use eval */
-        if (variable_get("front_2_php", 0)) {
-          $output = drupal_eval($output);
-         }
-	      $fptype = variable_get("front_2_type", "drupal");
-	        switch ($fptype) {
-          case "themed":
-		      print theme('page', $output);
-		      return;
-		
-          case "full":
-		      print $output;
-		      return;
-	  
-	        case "redirect":
-          $output = variable_get("front_2_redirect", "drupal");
-          drupal_goto($path = $output, $query = NULL, $fragment = NULL);
-          break;
-         }
-	  
-	      case "redirect":
-        $output = variable_get("front_". $role_id ."_redirect", "drupal");
-        drupal_goto($path = $output, $query = NULL, $fragment = NULL);
-        break;
-         
-     }
+            $output = variable_get("front_2_text", "drupal");
+            // If PHP code execution is allowed then use eval.
+            if (variable_get("front_2_php", 0)) {
+              $output = drupal_eval($output);
+            }
+            $fptype = variable_get("front_2_type", "drupal");
+            switch ($fptype) {
+              case "themed":
+                print theme('page', $output);
+                return;
+                
+              case "full":
+                print $output;
+                return;
+                
+              case "redirect":
+                $output = variable_get("front_2_redirect", "drupal");
+                drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+                break;
+            }
+              
+          case "redirect":
+            $output = variable_get("front_". $role_id ."_redirect", "drupal");
+            drupal_goto($path = $output, $query = NULL, $fragment = NULL);
+            break;
+            
+        }
+      }
     }
-   }
   }
 }
 
