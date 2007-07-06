@@ -21,21 +21,18 @@
  */ 
 function front_page_help($section) { 
   switch ($section) { 
-    case 'admin/modules#description': 
-      // This description is shown in the listing at admin/modules. 
-      return t('Allows you to setup custom front pages for your site.'); 
-      case 'admin/settings/front': 
-      $roles = "";
+    case 'admin/settings/front': 
       $roles = user_roles();
+      $special_note = '';
       if (count($roles) >= 3) {
-      krsort($roles);
-      $special_note .= "<fieldset><legend>front page by role usage</legend><p><strong>Note:</strong>When using the front pages by role option, please note that if a user has multiple roles the first role match will determine which front page they see. Here is the order that the roles will be checked (from left to right).</p><p>";
+        krsort($roles);
+        $special_note = t('<fieldset><legend>front page by role usage</legend><p><strong>Note:</strong>When using the front pages by role option, please note that if a user has multiple roles the first role match will determine which front page they see. Here is the order that the roles will be checked (from left to right).</p>') .'<p>';
         foreach ($roles as $role_id => $role_name) {
-         $special_note .= "<strong>". $role_id ."</strong> ". $role_name ." |  ";
+          $special_note .= "<strong>". $role_id ."</strong> ". $role_name ." |  ";
         }
-       $special_note .=  '<p>The default setting for new roles is SAME AS AUTHENTICATED USERS.</p></fieldset>';
+        $special_note .= '</p>'. t('<p>The default setting for new roles is SAME AS AUTHENTICATED USERS.</p>') . '</fieldset>';
       }
-      return t('<P>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><P><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>'. $special_note .'</p>'); 
+      return  t('<p>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><p><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>') . $special_note; 
    } 
 }
 /** 
