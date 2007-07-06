@@ -62,28 +62,97 @@ function front_page_menu($may_cache) {
  * 
  */ 
 function front_page_admin() {
- // Load any existing settings and build the by redirect by role form
-  $form['byrole'] = array('#type' => 'fieldset','#title' => t('Home pages'),'#description' => t('Designate a home page for each role. "Splash" pages will be used only when users are connecting from external sites. Spash pages must be in the form "node/x" where x is the id of a node, e.g., "node/21" (without the quotes). Only the body of the node will be displayed. Home pages are displayed when users follow internal home links, or for external links where there is no splash page designated, and may point to any page on the site.'),'#theme' => 'front_page_roles','#collapsible' => TRUE,'#tree' => TRUE);
-// build the form for roles
+  // Load any existing settings and build the by redirect by role form
+  $form['byrole'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Home pages'),
+    '#description' => t('Designate a home page for each role. "Splash" pages will be used only when users are connecting from external sites. Spash pages must be in the form "node/x" where x is the id of a node, e.g., "node/21" (without the quotes). Only the body of the node will be displayed. Home pages are displayed when users follow internal home links, or for external links where there is no splash page designated, and may point to any page on the site.'),
+    '#theme' => 'front_page_roles',
+    '#collapsible' => TRUE,
+    '#tree' => TRUE,
+  );
+  
+  // build the form for roles
   $roles = user_roles();
   foreach (element_children($roles) as $role) {
-  $rolename = $roles[$role];
-  $form[$role] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Front Page for '. $rolename .''));
-  $form[$role]['front_'. $role .'_text'] = array('#type' => 'textarea', '#title' => t('Body'), '#default_value' => variable_get('front_'. $role .'_text', ''), '#cols' => 60, '#rows' => 20, '#description' => t('Paste your HTML or TEXT here for visitors to your site who are already logged in. <br><br>You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'));
- if ($role > 2) {$form[$role]['front_'. $role .'_type'] = array('#type' => 'select', '#title' => t('Select type'), '#default_value' => variable_get('front_'. $role .'_type','sameasauth'), '#options' => array('themed' => t('themed'), 'full' => t('full'), 'redirect' => t('redirect'),'sameasauth' => t('same as authenticated users'),), '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.<br><strong>SAME AS AUTHENTICATED</strong> will display the same content as for Authenticated (logged in) users.</p>'),);}
-  else {$form[$role]['front_'. $role .'_type'] = array('#type' => 'select', '#title' => t('Select type'), '#default_value' => variable_get('front_'. $role .'_type','themed'), '#options' => array('themed' => t('themed'), 'full' => t('full'), 'redirect' => t('redirect'),), '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.</p>'),);}
-  $form[$role]['front_'. $role .'_redirect'] = array('#type' => 'textfield', '#title' => t('Redirect to'), '#default_value' => variable_get('front_'. $role .'_redirect', 'node'), '#cols' => 20, '#rows' => 1, '#description' => t('If you have selected <strong>REDIRECT</strong> you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'));  
-  $form[$role]['front_'. $role .'_php'] = array('#type' => 'checkbox', '#title' => t('Allow embedded PHP code in this front page'), '#return_value' => 1, '#default_value' => variable_get('front_'. $role .'_php',0), '#description' => t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.')); 
+    $rolename = $roles[$role];
+    
+    $form[$role] = array(
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#title' => t('Front Page for '. $rolename .''),
+    );
+    
+    $form[$role]['front_'. $role .'_text'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Body'),
+      '#default_value' => variable_get('front_'. $role .'_text', ''),
+      '#cols' => 60,
+      '#rows' => 20,
+      '#description' => t('Paste your HTML or TEXT here for visitors to your site who are already logged in. <br><br>You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'),
+    );
+    
+    if ($role > 2) {
+      $form[$role]['front_'. $role .'_type'] = array(
+        '#type' => 'select', 
+        '#title' => t('Select type'),
+        '#default_value' => variable_get('front_'. $role .'_type','sameasauth'),
+        '#options' => array(
+          'themed' => t('themed'),
+          'full' => t('full'),
+          'redirect' => t('redirect'),
+          'sameasauth' => t('same as authenticated users'),
+        ),
+        '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.<br><strong>SAME AS AUTHENTICATED</strong> will display the same content as for Authenticated (logged in) users.</p>'),
+      );
+    }
+    else {
+      $form[$role]['front_'. $role .'_type'] = array(
+        '#type' => 'select',
+        '#title' => t('Select type'),
+        '#default_value' => variable_get('front_'. $role .'_type','themed'),
+        '#options' => array(
+          'themed' => t('themed'),
+          'full' => t('full'),
+          'redirect' => t('redirect'),
+        ),
+        '#description' => t('<P><strong>THEMED</strong> means your default layout, theme and stylesheet will be loaded with your custom front_page. <br><strong>FULL</strong> allows you to have a completely different layout, style sheet etc.<br><strong>REDIRECT</strong> will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.</p>'),
+      );
+    }
+    
+    $form[$role]['front_'. $role .'_redirect'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Redirect to'),
+      '#default_value' => variable_get('front_'. $role .'_redirect', 'node'),
+      '#cols' => 20,
+      '#rows' => 1,
+      '#description' => t('If you have selected <strong>REDIRECT</strong> you need to specify where the user should be pointed to.  If you are not using clean URLs, specify the part after "?q=".  If unsure, specify "node".'),
+    );  
+    
+    $form[$role]['front_'. $role .'_php'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Allow embedded PHP code in this front page'),
+      '#return_value' => 1, '#default_value' => variable_get('front_'. $role .'_php',0),
+      '#description' => t('If this option is enabled, the body text can have embedded &lt;?php...?&gt; tags with PHP code inside. Click on the special Handbook pages for tips on <a href="http://drupal.org/node/23220">Using PHP snippets in your front_page</a>.'),
+    ); 
   }  
  
- $form['front_offline'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Custom "Temporarily Offline" message and disable site for all except admins'));
- $form['front_offline']['site_offline'] = array(
+  $form['front_offline'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Custom "Temporarily Offline" message and disable site for all except admins'),
+  );
+  
+  $form['front_offline']['site_offline'] = array(
     '#type' => 'radios',
     '#title' => t('Site maintenance'),
     '#default_value' => variable_get('site_offline', 0),
     '#options' => array(t('Online'), t('Off-line')),
     '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user'))),
   );
+  
   $form['front_offline']['site_offline_message'] = array(
     '#type' => 'textarea',
     '#title' => t('Site off-line message'),
@@ -91,8 +160,14 @@ function front_page_admin() {
     '#description' => t('Message to show visitors when the site is in off-line mode.')
   );
  
- $form['special_notice'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Custom mission for Authenticated Users who haven\'t visited the site for a set period'));
- $form['special_notice']['special_notice_time'] = array(
+  $form['special_notice'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Custom mission for Authenticated Users who haven\'t visited the site for a set period'),
+  );
+  
+  $form['special_notice']['special_notice_time'] = array(
 	  '#type' => 'select', 
 	  '#title' => t('Been away for'), 
 	  '#default_value' => variable_get('special_notice_time',''), 
@@ -104,10 +179,24 @@ function front_page_admin() {
 		  'six months' => t('six months'),
 		  'one year' => t('one year'),), 
 	  '#description' => t('<p>The length of time to check for when users see the special notice which will be displayed as a <em>mission</em> style notice on the front page.<p> '),
-	  );
-  $form['special_notice']['special_notice_text'] = array('#type' => 'textarea', '#title' => t('Body'), '#default_value' => variable_get('special_notice_text', ''), '#cols' => 60, '#rows' => 10, '#description' => t('Paste your HTML or TEXT here. It will be displayed as a <em>mission</em> style notice on the front page.'));
+	);
+  
+  $form['special_notice']['special_notice_text'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body'),
+    '#default_value' => variable_get('special_notice_text', ''),
+    '#cols' => 60,
+    '#rows' => 10,
+    '#description' => t('Paste your HTML or TEXT here. It will be displayed as a <em>mission</em> style notice on the front page.'),
+  );
  
-  $form['override'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => TRUE, '#title' => t('Override your HOME breadcrumb links'));
+  $form['override'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Override your HOME breadcrumb links'),
+  );
+  
   $form['override']['front_page_breadcrumb'] = array(
     '#type' => 'checkbox', 
     '#title' => t('Redirect your site HOME links'), 
@@ -115,6 +204,7 @@ function front_page_admin() {
     '#default_value' => variable_get('front_page_breadcrumb',0), 
     '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')
     ); 
+    
   $form['override']['front_page_breadcrumb_redirect'] = array(
     '#type' => 'textfield', 
     '#title' => t('Redirect your site HOME links to'), 
@@ -124,7 +214,13 @@ function front_page_admin() {
     '#field_prefix' => url(NULL, NULL, NULL, TRUE) . (variable_get('clean_url', 0) ? '' : '?q=')  
   );
   
-  $form['site'] = array('#type' => 'fieldset', '#collapsible' => TRUE, '#collapsed' => FALSE, '#title' => t('Activate your front_page settings'));
+  $form['site'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#title' => t('Activate your front_page settings'),
+  );
+  
   $form['site']['site_frontpage'] = array(
     '#type' => 'textfield',
     '#title' => t('Default front page'),
