@@ -11,10 +11,8 @@
  * If you have any ideas/patches or requests, please post them on the drupal.org
  * site or email us at gus(at)modernmediamuse.com
  *
- * Updated January 22nd 2007
- *
- *
  */
+
 /**
  * Implementation of hook_help().
  *
