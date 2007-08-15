@@ -44,7 +44,7 @@ click on HOME.
 Installation:
 ---------------
 
-1. Upload front_page.module to your MODULES folder.
+1. Upload or copy the 'front' directory and its content to your MODULES folder.
 
 2. Go to the ADMINISTER section of your drupal site.
 
