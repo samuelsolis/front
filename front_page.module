@@ -90,7 +90,7 @@ function front_page_admin() {
       '#default_value' => variable_get('front_'. $role .'_text', ''),
       '#cols' => 60,
       '#rows' => 20,
-      '#description' => t('Paste your HTML or TEXT here for visitors to your site who are already logged in. <br><br>You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'),
+      '#description' => t('Paste your HTML or TEXT here.') .'<br /><br />'. t('You can paste in the full HTML code for a complete page and include a different style sheet in the HEAD of the document if you want a completely different layout and style to the rest of your site.'),
     );
     
     // Set the type options common for all roles.
