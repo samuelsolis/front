@@ -6,3 +6,4 @@ package = Administration
 ; Information added by drupal.org packaging script on 2007-01-20
 project = "front"
 
+core = 6.x
