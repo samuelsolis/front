@@ -15,7 +15,6 @@
 
 /**
  * Implementation of hook_help().
- *
  */
 function front_page_help($section) {
   switch ($section) {
@@ -35,8 +34,7 @@ function front_page_help($section) {
 }
 
 /**
- * This function sets the necessary paths etc., so drupal
- * knows where to find the front page.
+ * Implementation of hook_menu.
  */
 function front_page_menu() {
    $items['admin/settings/front'] = array(
@@ -54,7 +52,7 @@ function front_page_menu() {
 }
 
 /**
- * Implementation of hook_perm
+ * Implementation of hook_perm.
  */
 function front_page_perm() {
   return array('access frontpage');
