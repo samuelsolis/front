@@ -314,11 +314,11 @@ function front_page() {
     $fptype = variable_get('front_1_type', 'drupal');
     switch ($fptype) {
       case 'themed':
-        echo theme('page', $output);
+        print theme('page', $output);
         return;
 
       case 'full':
-        echo $output;
+        print $output;
         return;
 
       case 'redirect':
@@ -355,11 +355,11 @@ function front_page() {
         $fptype = variable_get('front_'. $role_id .'_type', 'drupal'); //check whether it is a themed or full front page.
         switch ($fptype) {
           case 'themed':
-            echo theme('page', $output);
+            print theme('page', $output);
             return;
 
           case 'full':
-            echo $output;
+            print $output;
             return;
 
           case 'same_as_anon':
@@ -371,11 +371,11 @@ function front_page() {
             $fptype = variable_get('front_1_type', 'drupal');
             switch ($fptype) {
               case 'themed':
-                echo theme('page', $output);
+                print theme('page', $output);
                 return;
 
               case 'full':
-                echo $output;
+                print $output;
                 return;
 
               case 'redirect':
@@ -393,11 +393,11 @@ function front_page() {
             $fptype = variable_get('front_2_type', 'drupal');
             switch ($fptype) {
               case 'themed':
-                echo theme('page', $output);
+                print theme('page', $output);
                 return;
 
               case 'full':
-                echo $output;
+                print $output;
                 return;
 
               case 'redirect':
