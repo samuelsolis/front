@@ -1,6 +1,7 @@
 $Id$
 
-Introduction:
+Introduction
+================
 
 This module is for people who want a custom front page to their Drupal sites.
 
@@ -10,11 +11,12 @@ If you are comfortable with theming using a mix of php/html, I recommend you che
 handbook pages I have added to Drupal.org which explains how a more advanced method of theming
 your front page. http://drupal.org/node/46017 
 
-This module is intended for Drupal Version 5.0 
+This module is intended for Drupal Version 6.x 
 It will not work with earlier versions.
 
 
-Key Functionality:
+Key Functionality
+=====================
 
 1. Allows you to specify a custom front page based on role type.
 
@@ -41,8 +43,8 @@ click on HOME.
 
 
 
-Installation:
----------------
+Installation
+===============
 
 1. Upload or copy the 'front' directory and its content to your MODULES folder.
 
@@ -52,13 +54,13 @@ Installation:
 
 4. Enable the front_page.module
 
-5(a). (Drupal 4.6.x and Drupal 4.7.x) Go to ADMINISTER - SETTINGS - FRONT_PAGE 
-5(b). (Drupal 5.x) Go to ADMINISTER - SITE CONGIFURATION - ADVANCED FRONT PAGE SETTINGS
+5 Go to ADMINISTER - SITE CONGIFURATION - ADVANCED FRONT PAGE SETTINGS
 
 6. Paste in the TEXT/HTML/PHP contents of your front pages. 
 
 7. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page. 
     
+8. Go to ADMINISTER - USER MANAGEMENT - PERMISSIONS and enable ACCESS FRONT PAGE for anonymous/authenticated users.  
    
 ############################################
 IMPORTANT NOTE FOR THOSE USING PATH.MODULE (URL ALIAS):
@@ -70,7 +72,7 @@ installing the front_page.module which uses the
 
 
 PROMOTED TO FRONT PAGE Example snippet
-----------------------------------------
+=======================================
 The default front page when you install Drupal for the first time, is 'node' which displays a list of node teasers, where
 the nodes have been tagged as pages that are 'Promoted to Front Page'. 
 
@@ -83,14 +85,12 @@ the text area provided on the front_page settings page and select the PHP filter
 
    
    
-Uninstall:
--------------
+Uninstall
+=========
 
-1(a) (Drupal 4.6.x and Drupal 4.7.x)  Go to ADMINISTER -> SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
-1(b) (Drupal 5.x) Go to ADMINISTER -> SITE CONFIGURATION -> ADVANCED FRONT PAGE SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
+1. Go to ADMINISTER -> SITE CONFIGURATION -> ADVANCED FRONT PAGE SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
 
-2(a) (Drupal 4.6.x and Drupal 4.7.x) Go to ADMINISTER -> MODULES and de-select the front_page.module from your list of modules.
-2(b) (Drupal 5.x) Go to ADMINISTER -> MODULES and de-select the front_page.module from your list of modules.
+2. Go to ADMINISTER -> MODULES and de-select the front_page.module from your list of modules.
 
 3. Using FTP or other file manager, remove the front_page.module files and folder.
 
@@ -106,4 +106,4 @@ how we can improve the module.
 Dublin Drupaller
 
 
-gus@modernmediamuse.com
+dub@dublindrupaller.com
