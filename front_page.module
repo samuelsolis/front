@@ -48,9 +48,16 @@ function front_page_menu() {
    $items['front_page'] = array(
       'title' => '',
       'page callback' => 'front_page',
-      'access arguments' => array('access content'),
+      'access arguments' => array('access frontpage'),
       'type' => MENU_SUGGESTED_ITEM);
   return $items;
+}
+
+/**
+ * Implementation of hook_perm
+ */
+function front_page_perm() {
+  return array('access frontpage');
 }
 
 /**
