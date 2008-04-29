@@ -82,7 +82,7 @@ function front_page_admin() {
       '#type' => 'fieldset',
       '#collapsible' => true,
       '#collapsed' => true,
-      '#title' => t('Front Page for %rolename.', array('%rolename' => $rolename)),
+      '#title' => t('Front Page for !rolename.', array('!rolename' => $rolename)),
     );
 
     $form[$role]['front_'. $role .'_text'] = array(
