@@ -30,24 +30,24 @@ function front_page_help($section) {
         $special_note .= '</p>'. t('<p>The default setting for new roles is SAME AS AUTHENTICATED USERS.</p>') .'</fieldset>';
       }
       return  t('<p>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><p><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>') . $special_note;
-   }
+  }
 }
 
 /**
  * Implementation of hook_menu.
  */
 function front_page_menu() {
-   $items['admin/settings/front'] = array(
-      'title' => 'Advanced front page settings',
-      'description' => 'Specify a unique layout or splash page based on role type - override your HOME and breadcrumb links - display a custom mission style notice for users who haven\'t visited in a while - disable site and display a \'temporarily offline\' message.',
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('front_page_admin'),
-      'access arguments' => array('administer menu'));
-   $items['front_page'] = array(
-      'title' => '',
-      'page callback' => 'front_page',
-      'access arguments' => array('access frontpage'),
-      'type' => MENU_SUGGESTED_ITEM);
+  $items['admin/settings/front'] = array(
+    'title' => 'Advanced front page settings',
+    'description' => 'Specify a unique layout or splash page based on role type - override your HOME and breadcrumb links - display a custom mission style notice for users who haven\'t visited in a while - disable site and display a \'temporarily offline\' message.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('front_page_admin'),
+    'access arguments' => array('administer menu'));
+  $items['front_page'] = array(
+    'title' => '',
+    'page callback' => 'front_page',
+    'access arguments' => array('access frontpage'),
+    'type' => MENU_SUGGESTED_ITEM);
   return $items;
 }
 
@@ -168,7 +168,7 @@ function front_page_admin() {
     '#title' => t('Site maintenance'),
     '#default_value' => variable_get('site_offline', 0),
     '#options' => array(t('Online'), t('Off-line')),
-    '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user',array('query' => drupal_get_destination())))),
+    '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user', array('query' => drupal_get_destination())))),
   );
 
   $form['front_offline']['site_offline_message'] = array(
@@ -230,7 +230,7 @@ function front_page_admin() {
     '#default_value' => variable_get('front_page_breadcrumb_redirect', ''),
     '#cols' => 20, '#rows' => 1,
     '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'),
-    '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q=')  
+    '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q=')
   );
 
   $form['site'] = array(
@@ -250,13 +250,13 @@ function front_page_admin() {
   );
 
 
- return system_settings_form($form);
+  return system_settings_form($form);
 }
 
 
 /***********************************************
  * Function to handle the display of the front page.
- ***********************************************/
+ */
 function front_page() {
   // Set a default value for landing zone if no front_page variables are filled.
   // If the module is turned on but empty in certain areas then a redirection loop will occur.
