@@ -1,4 +1,3 @@
-$Id$
 
 If you are updating your fonrt_Page.module from an earlier version make sure
 you copy your existing front page text areas for anonymous users and
