@@ -10,7 +10,7 @@ If you are comfortable with theming using a mix of php/html, I recommend you che
 handbook pages I have added to Drupal.org which explains how a more advanced method of theming
 your front page. http://drupal.org/node/46017 
 
-This module is intended for Drupal Version 6.x 
+This module is intended for Drupal Version 7.x
 It will not work with earlier versions.
 
 
@@ -47,19 +47,17 @@ Installation
 
 1. Upload or copy the 'front' directory and its content to your MODULES folder.
 
-2. Go to the ADMINISTER section of your drupal site.
+2. Go to the MODULES section of your drupal site.
 
-3. Click on MODULES
+3. Enable the front_page.module
 
-4. Enable the front_page.module
+4. Go to CONGIFURATION - ADVANCED FRONT PAGE SETTINGS
 
-5 Go to ADMINISTER - SITE CONGIFURATION - ADVANCED FRONT PAGE SETTINGS
+5. Paste in the TEXT/HTML/PHP contents of your front pages.
 
-6. Paste in the TEXT/HTML/PHP contents of your front pages. 
-
-7. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page. 
+6. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page.
     
-8. Go to ADMINISTER - USER MANAGEMENT - PERMISSIONS and enable ACCESS FRONT PAGE for anonymous/authenticated users.  
+7. Go to PEOPLE - PERMISSIONS and enable ACCESS FRONT PAGE for anonymous/authenticated users.
    
 ############################################
 IMPORTANT NOTE FOR THOSE USING PATH.MODULE (URL ALIAS):
@@ -87,9 +85,9 @@ the text area provided on the front_page settings page and select the PHP filter
 Uninstall
 =========
 
-1. Go to ADMINISTER -> SITE CONFIGURATION -> ADVANCED FRONT PAGE SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
+1. Go to CONFIGURATION -> ADVANCED FRONT PAGE SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
 
-2. Go to ADMINISTER -> MODULES and de-select the front_page.module from your list of modules.
+2. Go to MODULES and de-select the front_page.module from your list of modules.
 
 3. Using FTP or other file manager, remove the front_page.module files and folder.
 

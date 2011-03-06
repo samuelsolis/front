@@ -1,8 +1,4 @@
 name = Front Page
 description = Allows site admins setup custom front pages for the site.
 package = Administration
-
-; Information added by drupal.org packaging script on 2007-01-20
-project = "front"
-
-core = 6.x
+core = 7.x
