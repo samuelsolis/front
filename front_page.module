@@ -23,9 +23,11 @@ function front_page_help($section) {
       if (count($roles) >= 3) {
         krsort($roles);
         $special_note = '<fieldset>' . t('<legend><span class="fieldset-legend">front page by role usage</span></legend><div class="fieldset-wrapper"><p><strong>Note:</strong>When using the front pages by role option, please note that if a user has multiple roles the first role match will determine which front page they see. Here is the order that the roles will be checked (from left to right).</p>') . '<p>';
+        $special_note_roles = array();
         foreach ($roles as $role_id => $role_name) {
-          $special_note .= "<strong>$role_id</strong> $role_name |  ";
+          $special_note_roles[] = "<strong>$role_id</strong> $role_name";
         }
+        $special_note .= implode(' | ', $special_note_roles);
         $special_note .= '</p>' . t('<p>The default setting for new roles is SAME AS AUTHENTICATED USERS.</p>') . '</div></fieldset>';
       }
       return t('<p>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><p><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>') . $special_note;
@@ -42,6 +44,15 @@ function front_page_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin'),
     'access arguments' => array('administer menu'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/system/front/arrange'] = array(
+    'title' => 'Arrange front page settings',
+    'description' => 'Ability to re-arrange what order front page roles are processed.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('front_page_admin_arrange'),
+    'access arguments' => array('administer menu'),
+    'type' => MENU_LOCAL_TASK,
   );
   $items['front_page'] = array(
     'title' => '',
@@ -105,6 +116,7 @@ function front_page_admin($form, &$form_state) {
       'themed' => t('themed'),
       'full' => t('full'),
       'redirect' => t('redirect'),
+      'mask' => t('mask'),
     );
 
     // Set the description common for all roles.
@@ -114,6 +126,8 @@ function front_page_admin($form, &$form_state) {
       <dd>' . t('allows you to have a completely different layout, style sheet etc.') . '</dd></dl>';
     $description .= '<dl><dt>' . t('redirect') . '</dt>
       <dd>' . t('will automatically redirect visitors already logged in to a specific page specified in the REDIRECT TO box.') . '</dd></dl>';
+    $description .= '<dl><dt>' . t('mask') . '</dt>
+      <dd>' . t('will display the page listed in path as if it were the home page. This option does not redirect.') . '</dd></dl>';
 
     // Set the options that varies from role to role.
     switch ($role) {
@@ -294,28 +308,13 @@ function front_page() {
   //this checks to see if you are overriding HOME links on the site
   if (variable_get('front_page_breadcrumb', 0) && isset($_SERVER['HTTP_REFERER'])) {
     // This checks to see if the referer is an internal HOME link or not.
-    $newhome = variable_get('front_page_breadcrumb_redirect', 'node');
     $ref = $_SERVER['HTTP_REFERER'];
     global $user, $base_url;
     $parsed_url = parse_url($base_url);
     $domain = $parsed_url['host'];
     if (stristr($ref, $domain)) {
-      $path = $newhome;
-      $query = array();
-      $fragment = '';
-      if (preg_match('@^(?P<path>[^?#]+)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$@', $newhome, $match)) {
-        $path = $match['path'];
-        if (!empty($match['query'])) {
-          foreach (explode('&', $match['query']) as $query_part) {
-            list($key, $value) = explode('=', $query_part);
-            $query[$key] = $value;
-          }
-        }
-        if (!empty($match['fragment'])) {
-          $fragment = $match['fragment'];
-        }
-      }
-      drupal_goto($newhome, array('query' => $query, 'fragment' => $fragment));
+      $url = front_page_parse_url(variable_get('front_page_breadcrumb_redirect', 'node'));
+      drupal_goto($url['path'], $url['options']);
     }
   }
 
@@ -341,23 +340,8 @@ function front_page() {
         return $output;
 
       case 'redirect':
-        $output = variable_get('front_1_redirect', 'drupal');
-        $path = $output;
-        $query = array();
-        $fragment = '';
-        if (preg_match('@^(?P<path>[^?#]+)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$@', $output, $match)) {
-          $path = $match['path'];
-          if (!empty($match['query'])) {
-            foreach (explode('&', $match['query']) as $query_part) {
-              list($key, $value) = explode('=', $query_part);
-              $query[$key] = $value;
-            }
-          }
-          if (!empty($match['fragment'])) {
-            $fragment = $match['fragment'];
-          }
-        }
-        drupal_goto($output, array('query' => $query, 'fragment' => $fragment));
+        $url = front_page_parse_url(variable_get('front_1_redirect', 'drupal'));
+        drupal_goto($url['path'], $url['options']);
         break;
     }
   }
@@ -413,23 +397,8 @@ function front_page() {
                 return $output;
 
               case 'redirect':
-                $output = variable_get('front_1_redirect', 'drupal');
-                $path = $output;
-                $query = array();
-                $fragment = '';
-                if (preg_match('@^(?P<path>[^?#]+)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$@', $output, $match)) {
-                  $path = $match['path'];
-                  if (!empty($match['query'])) {
-                    foreach (explode('&', $match['query']) as $query_part) {
-                      list($key, $value) = explode('=', $query_part);
-                      $query[$key] = $value;
-                    }
-                  }
-                  if (!empty($match['fragment'])) {
-                    $fragment = $match['fragment'];
-                  }
-                }
-                drupal_goto($output, array('query' => $query, 'fragment' => $fragment));
+                $url = front_page_parse_url(variable_get('front_1_redirect', 'drupal'));
+                drupal_goto($url['path'], $url['options']);
                 break;
             }
 
@@ -450,44 +419,14 @@ function front_page() {
                 return $output;
 
               case 'redirect':
-                $output = variable_get('front_2_redirect', 'drupal');
-                $path = $output;
-                $query = array();
-                $fragment = '';
-                if (preg_match('@^(?P<path>[^?#]+)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$@', $output, $match)) {
-                  $path = $match['path'];
-                  if (!empty($match['query'])) {
-                    foreach (explode('&', $match['query']) as $query_part) {
-                      list($key, $value) = explode('=', $query_part);
-                      $query[$key] = $value;
-                    }
-                  }
-                  if (!empty($match['fragment'])) {
-                    $fragment = $match['fragment'];
-                  }
-                }
-                drupal_goto($output, array('query' => $query, 'fragment' => $fragment));
+                $url = front_page_parse_url(variable_get('front_2_redirect', 'drupal'));
+                drupal_goto($url['path'], $url['options']);
                 break;
             }
 
           case 'redirect':
-            $output = variable_get('front_' . $role_id . '_redirect', 'drupal');
-            $path = $output;
-            $query = array();
-            $fragment = '';
-            if (preg_match('@^(?P<path>[^?#]+)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$@', $output, $match)) {
-              $path = $match['path'];
-              if (!empty($match['query'])) {
-                foreach (explode('&', $match['query']) as $query_part) {
-                  list($key, $value) = explode('=', $query_part);
-                  $query[$key] = $value;
-                }
-              }
-              if (!empty($match['fragment'])) {
-                $fragment = $match['fragment'];
-              }
-            }
-            drupal_goto($path, array('query' => $query, 'fragment' => $fragment));
+            $url = front_page_parse_url(variable_get('front_' . $role_id . '_redirect', 'drupal'));
+            drupal_goto($url['path'], $url['options']);
             break;
         }
       }
@@ -495,3 +434,48 @@ function front_page() {
   }
 }
 
+function front_page_admin_arrange($form, &$form_state) {
+  $roles = user_roles(); //load up the user roles for the site
+  $form['roles'] = array(
+    '#tree' => TRUE,
+  );
+  dpm($roles);
+  foreach ($roles as $role_id => $role_name) {
+    $form['roles'][$role_id] = array(
+    );
+  }
+  return $form;
+}
+
+function front_page_parse_url($path) {
+  $url['path'] = $path;
+  $url['options'] = array();
+  if (preg_match('@^(?P<path>[^?#]+)(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$@', $path, $match)) {
+    $url['path'] = $match['path'];
+    if (!empty($match['query'])) {
+      foreach (explode('&', $match['query']) as $query_part) {
+        list($key, $value) = explode('=', $query_part);
+        $url['options']['query'][$key] = $value;
+      }
+    }
+    if (!empty($match['fragment'])) {
+      $url['options']['fragment'] = $match['fragment'];
+    }
+  }
+  return $url;
+}
+
+function front_page_init() {
+  if (drupal_is_front_page ()) {
+    $_GET['q'] = 'user';
+    // turn caching off for this page as it is dependant on role.
+    $GLOBALS['conf']['cache'] = FALSE;
+    front_page_get_first_role();
+  }
+}
+
+function front_page_get_first_role() {
+  global $user;
+  $roles = array_keys($user->roles);
+  dpm($roles);
+}
