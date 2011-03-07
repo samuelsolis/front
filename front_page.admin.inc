@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Admin page callbacks for the front page module.
+ */
+
+/**
  * This function sets up the admin/build/front_page settings page.
  *
  */
@@ -240,7 +245,7 @@ function front_page_admin_submit($form, &$form_state) {
       }
     }
   }
-  drupal_set_message('Your settings have been saved.');
+  drupal_set_message(t('Your settings have been saved.'));
 }
 
 function front_page_admin_arrange_form($form, &$form_state) {

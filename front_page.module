@@ -80,26 +80,26 @@ function front_page_menu() {
 function front_page_init() {
   if ($_GET['q'] == 'front_page') {
     $_GET['q'] = 'node';
-    drupal_set_message('There is a configuration error. The home page should not be set to the path "front_page".', 'error');
+    drupal_set_message(t('There is a configuration error. The home page should not be set to the path "front_page".'), 'error');
   }
   if (variable_get('front_page_enable', 0) && drupal_is_front_page()) {
-    global $front_page, $conf;
-    $front_page = front_page_get_by_role();
+    global $_front_page, $conf;
+    $_front_page = front_page_get_by_role();
 
-    if ($front_page) {
-      switch ($front_page['mode']) {
+    if ($_front_page) {
+      switch ($_front_page['mode']) {
         case 'themed':
         case 'full':
           $_GET['q'] = 'front_page';
           break;
 
         case 'redirect':
-          $url = front_page_parse_url($front_page['data']);
+          $url = front_page_parse_url($_front_page['data']);
           drupal_goto($url['path'], $url['options']);
           break;
 
         case 'alias':
-          $url = front_page_parse_url($front_page['data']);
+          $url = front_page_parse_url($_front_page['data']);
           $_GET['q'] = drupal_get_normal_path($url['path']);
           // need to set variable site_frontpage to current path so that it thinks it the front page for just this role.
           $conf['site_frontpage'] = $_GET['q'];
@@ -117,16 +117,16 @@ function front_page_init() {
  */
 
 function front_page() {
-  // $front_page variable should already have been loaded in front_page_init() function.
-  global $front_page;
+  // $_front_page variable should already have been loaded in front_page_init() function.
+  global $_front_page;
 
-  if ($front_page) {
-    switch ($front_page['mode']) {
+  if ($_front_page) {
+    switch ($_front_page['mode']) {
       case 'themed':
-        return check_markup($front_page['data'], $front_page['filter_format']);
+        return check_markup($_front_page['data'], $_front_page['filter_format']);
 
       case 'full':
-        print check_markup($front_page['data'], $front_page['filter_format']);
+        print check_markup($_front_page['data'], $_front_page['filter_format']);
         exit;
     }
   }
