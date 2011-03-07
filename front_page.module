@@ -334,10 +334,13 @@ function front_page() {
     $fptype = variable_get('front_1_type', 'drupal');
     switch ($fptype) {
       case 'themed':
-      // Removed theme('page', $output) wrapper from $output as
-      // discussed at http://drupal.org/node/224333#theme_page.
-      case 'full':
+        // Removed theme('page', $output) wrapper from $output as
+        // discussed at http://drupal.org/node/224333#theme_page.
         return $output;
+
+      case 'full':
+        print $output;
+        exit;
 
       case 'redirect':
         $url = front_page_parse_url(variable_get('front_1_redirect', 'drupal'));
@@ -375,10 +378,13 @@ function front_page() {
         $fptype = variable_get('front_' . $role_id . '_type', 'drupal'); //check whether it is a themed or full front page.
         switch ($fptype) {
           case 'themed':
-          // Removed theme('page', $output) wrapper from $output as
-          // discussed at http://drupal.org/node/224333#theme_page.
-          case 'full':
+            // Removed theme('page', $output) wrapper from $output as
+            // discussed at http://drupal.org/node/224333#theme_page.
             return $output;
+
+          case 'full':
+            print $output;
+            exit;
 
           case 'same_as_anon':
             $output = variable_get('front_1_text', 'drupal');
@@ -391,10 +397,13 @@ function front_page() {
             $fptype = variable_get('front_1_type', 'drupal');
             switch ($fptype) {
               case 'themed':
-              // Removed theme('page', $output) wrapper from $output as
-              // discussed at http://drupal.org/node/224333#theme_page.
-              case 'full':
+                // Removed theme('page', $output) wrapper from $output as
+                // discussed at http://drupal.org/node/224333#theme_page.
                 return $output;
+
+              case 'full':
+                print $output;
+                exit;
 
               case 'redirect':
                 $url = front_page_parse_url(variable_get('front_1_redirect', 'drupal'));
@@ -413,10 +422,13 @@ function front_page() {
             $fptype = variable_get('front_2_type', 'drupal');
             switch ($fptype) {
               case 'themed':
-              // Removed theme('page', $output) wrapper from $output as
-              // discussed at http://drupal.org/node/224333#theme_page.
-              case 'full':
+                // Removed theme('page', $output) wrapper from $output as
+                // discussed at http://drupal.org/node/224333#theme_page.
                 return $output;
+
+              case 'full':
+                print $output;
+                exit;
 
               case 'redirect':
                 $url = front_page_parse_url(variable_get('front_2_redirect', 'drupal'));
