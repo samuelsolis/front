@@ -36,7 +36,7 @@ function front_page_help($section) {
  * Implements hook_menu().
  */
 function front_page_menu() {
-  $items['admin/config/front'] = array(
+  $items['admin/config/system/front'] = array(
     'title' => 'Advanced front page settings',
     'description' => 'Specify a unique layout or splash page based on role type - override your HOME and breadcrumb links - display a custom mission style notice for users who haven\'t visited in a while - disable site and display a \'temporarily offline\' message.',
     'page callback' => 'drupal_get_form',
