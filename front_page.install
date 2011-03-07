@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the front page module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function front_page_install() {
+
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function front_page_uninstall() {
+
+}
+
+/**
+ * Implements hook_schema().
+ */
+function front_page_schema() {
+  $schema['front_page'] = array(
+    'description' => 'Stores Front Page settings.',
+    'fields' => array(
+      'rid'  => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Primary Key: Role ID.',
+      ),
+      'mode' => array(
+        'type' => 'varchar',
+        'length' => 10,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'The mode the front page will operate in for the selected role.',
+      ),
+      'data' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big',
+        'description' => 'Contains the data for the selected mode. This could be a path or html to display.',
+      ),
+      'filter_format' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'The filter format to apply to the data.',
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'default' => 0,
+        'description' => 'The weight of the front page setting.',
+      )
+    ),
+    'primary key' => array('rid'),
+    'indexes' => array(
+      'weight' => array('weight'),
+    ),
+  );
+
+  return $schema;
+}
+
