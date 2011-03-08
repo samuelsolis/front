@@ -17,7 +17,7 @@
  */
 function front_page_help($section) {
   switch ($section) {
-    case 'admin/config/system/front':
+    case 'admin/config/front':
       $roles = user_roles();
       $front_page_data = front_page_get_all();
 
@@ -32,6 +32,8 @@ function front_page_help($section) {
         $special_note .= '</p>' . t('<p>The default setting for new roles is SKIP.</p>') . '</div></fieldset>';
       }
       return t('<p>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><p><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>') . $special_note;
+    case 'admin/config/front/arrange':
+      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the '.l('Settings','admin/config/front').' tab</p>');
   }
 }
 

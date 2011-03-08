@@ -56,7 +56,7 @@ function front_page_admin($form, &$form_state) {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#title' => t('Front Page for !rolename.', array('!rolename' => $role)),
-      '#weight' => $front_page_data[$rid]['weight'],
+      '#weight' => isset($front_page_data[$rid]['weight']) ? $front_page_data[$rid]['weight'] : 0,
     );
 
     $form['roles'][$rid]['mode'] = array(
@@ -256,29 +256,22 @@ function front_page_admin_arrange_form($form, &$form_state) {
     '#tree' => TRUE,
   );
   foreach ($front_page_data as $role_id => $role) {
-    $form['roles'][$role_id]['title'] = array(
-      '#markup' => $roles[$role_id],
-    );
-    if (!empty($role['mode']) && $role['mode'] != 'skip') {
+    if (!empty($role['mode']) && $role['mode'] != 'skip' && $role_id > 1) {
+      $form['roles'][$role_id]['title']['#markup'] = $roles[$role_id];
       $form['roles'][$role_id]['mode'] = array(
         '#type' => 'checkbox',
         '#title' => t('Enable'),
         '#title_display' => 'invisible',
         '#default_value' => TRUE,
       );
-    }
-    else {
-      $form['roles'][$role_id]['mode'] = array(
-        '#markup' => 'disabled',
+      $form['roles'][$role_id]['weight'] = array(
+        '#type' => 'weight',
+        '#title' => t('Weight'),
+        '#title_display' => 'invisible',
+        '#delta' => 10,
+        '#default_value' => $role['weight'],
       );
     }
-    $form['roles'][$role_id]['weight'] = array(
-      '#type' => 'weight',
-      '#title' => t('Weight'),
-      '#title_display' => 'invisible',
-      '#delta' => 10,
-      '#default_value' => $role['weight'],
-    );
   }
 
   $form['submit'] = array(
