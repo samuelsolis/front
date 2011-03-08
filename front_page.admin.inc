@@ -6,8 +6,7 @@
  */
 
 /**
- * This function sets up the admin/build/front_page settings page.
- *
+ * Form for configuring front page settings.
  */
 function front_page_admin($form, &$form_state) {
   $form['front_page_enable'] = array(
@@ -32,7 +31,7 @@ function front_page_admin($form, &$form_state) {
 
   // Set the type options common for all roles.
   $options = array(
-    'skip' => t('skip'),
+    '' => t('skip'),
     'themed' => t('themed'),
     'full' => t('full'),
     'redirect' => t('redirect'),
@@ -62,7 +61,7 @@ function front_page_admin($form, &$form_state) {
     $form['roles'][$rid]['mode'] = array(
       '#type' => 'select',
       '#title' => t('Select mode'),
-      '#default_value' => isset($front_page_data[$rid]['mode']) ? $front_page_data[$rid]['mode'] : 'skip',
+      '#default_value' => isset($front_page_data[$rid]['mode']) ? $front_page_data[$rid]['mode'] : '',
       '#options' => $options,
       '#description' => '<p>' . $description . '</p>',
     );
@@ -171,6 +170,9 @@ function front_page_admin($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Validation hook for front_page_admin.
+ */
 function front_page_admin_validate($form, &$form_state) {
   if (is_array($form_state['values']['roles'])) {
     foreach ($form_state['values']['roles'] as $rid => $role) {
@@ -199,6 +201,9 @@ function front_page_admin_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Submit hook for front_page_admin.
+ */
 function front_page_admin_submit($form, &$form_state) {
   variable_set('front_page_enable', $form_state['values']['front_page_enable']);
   variable_set('site_offline', $form_state['values']['site_offline']);
@@ -206,7 +211,7 @@ function front_page_admin_submit($form, &$form_state) {
   variable_set('front_page_breadcrumb', $form_state['values']['front_page_breadcrumb']);
   variable_set('front_page_breadcrumb_redirect', $form_state['values']['front_page_breadcrumb_redirect']);
 
-  db_query("UPDATE {front_page} SET mode='skip'");
+  db_query("UPDATE {front_page} SET mode=''");
   if (is_array($form_state['values']['roles'])) {
     foreach ($form_state['values']['roles'] as $rid => $role) {
       switch ($role['mode']) {
@@ -232,11 +237,11 @@ function front_page_admin_submit($form, &$form_state) {
               ))
               ->execute();
           break;
-        case 'skip':
+        default:
           db_merge('front_page')
               ->key(array('rid' => $rid))
               ->fields(array(
-                'mode' => 'skip',
+                'mode' => '',
                 'data' => '',
                 'filter_format' => '',
               ))
@@ -248,6 +253,9 @@ function front_page_admin_submit($form, &$form_state) {
   drupal_set_message(t('Your settings have been saved.'));
 }
 
+/**
+ * Form for arranging the roles according to what order the roles should be processed.
+ */
 function front_page_admin_arrange_form($form, &$form_state) {
   $roles = user_roles();
   $front_page_data = front_page_get_all();
@@ -256,7 +264,7 @@ function front_page_admin_arrange_form($form, &$form_state) {
     '#tree' => TRUE,
   );
   foreach ($front_page_data as $role_id => $role) {
-    if (!empty($role['mode']) && $role['mode'] != 'skip' && $role_id > 1) {
+    if (!empty($role['mode']) && $role_id > 1) {
       $form['roles'][$role_id]['title']['#markup'] = $roles[$role_id];
       $form['roles'][$role_id]['mode'] = array(
         '#type' => 'checkbox',
@@ -281,6 +289,9 @@ function front_page_admin_arrange_form($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Submit hook for front_page_admin_arrange_form.
+ */
 function front_page_admin_arrange_form_submit($form, &$form_state) {
   $front_page_data = front_page_get_all();
   foreach ($form_state['values']['roles'] as $rid => $role) {
@@ -288,7 +299,7 @@ function front_page_admin_arrange_form_submit($form, &$form_state) {
       db_merge('front_page')
           ->key(array('rid' => $rid))
           ->fields(array(
-            'mode' => 'skip',
+            'mode' => '',
             'data' => '',
             'filter_format' => '',
             'weight' => $role['weight'],
@@ -307,13 +318,11 @@ function front_page_admin_arrange_form_submit($form, &$form_state) {
 }
 
 /**
- * Returns HTML for the menu overview form into a table.
+ * Returns HTML for the front page arrange form into a table.
  *
  * @param $variables
  *   An associative array containing:
  *   - form: A render element representing the form.
- *
- * @ingroup themeable
  */
 function theme_front_page_admin_arrange_form($variables) {
   $form = $variables['form'];

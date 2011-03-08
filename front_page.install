@@ -16,7 +16,11 @@ function front_page_install() {
  * Implements hook_uninstall().
  */
 function front_page_uninstall() {
-
+  variable_del('front_page_enable');
+  variable_del('site_offline');
+  variable_del('site_offline_message');
+  variable_del('front_page_breadcrumb');
+  variable_del('front_page_breadcrumb_redirect');
 }
 
 /**
@@ -67,3 +71,14 @@ function front_page_schema() {
   return $schema;
 }
 
+function front_page_update_7201() {
+  if (!db_table_exists('front_page')) {
+    $schema = drupal_get_schema_unprocessed($module);
+    _drupal_initialize_schema($module, $schema);
+    if (isset($schema['front_page'])) {
+      db_create_table('front_page', $schema['front_page']);
+    }
+
+    // need to add front page data from variables table to new table.
+  }
+}
