@@ -74,7 +74,7 @@ function front_page_schema() {
 /**
  * Update 7200 - Add table if not already added, transfer data into the table and correct special notice times.
  */
-function front_page_update_7202() {
+function front_page_update_7200() {
   if (!db_table_exists('front_page')) {
     $schema = drupal_get_schema_unprocessed('front_page');
     _drupal_schema_initialize($schema, 'front_page', FALSE);
