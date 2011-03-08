@@ -72,18 +72,19 @@ function front_page_schema() {
 }
 
 /**
- * Update 
+ * Update 7200 - Add table if not already added, transfer data into the table and correct special notice times.
  */
-function front_page_update_7200() {
+function front_page_update_7202() {
   if (!db_table_exists('front_page')) {
-    $schema = drupal_get_schema_unprocessed($module);
-    _drupal_initialize_schema($module, $schema);
+    $schema = drupal_get_schema_unprocessed('front_page');
+    _drupal_schema_initialize($schema, 'front_page', FALSE);
     if (isset($schema['front_page'])) {
       db_create_table('front_page', $schema['front_page']);
     }
 
     // need to add front page data from variables table to new table.
     $formats = filter_formats();
+    $formats = drupal_map_assoc(array_keys($formats));
     $default_format = array_shift($formats);
     $php_format = isset($formats['php_code']) ? 'php_code' : $default_format;
 
@@ -127,5 +128,41 @@ function front_page_update_7200() {
         variable_del('front_' . $rid . '_redirect');
       }
     }
+  }
+
+  $time = variable_get('special_notice_time', '');
+  if (!empty($time)) {
+    switch ($time) {
+      case 'one week':
+      case '1 week':
+        $time = '1 week';
+        break;
+      case 'one month':
+      case '1 month':
+        $time = '1 month';
+        break;
+      case 'three months':
+      case '3 months':
+        $time = '3 months';
+        break;
+      case 'six months':
+      case '6 months':
+        $time = '6 months';
+        break;
+      case 'one year':
+      case '1 year':
+        $time = '1 year';
+        break;
+      case 'one day':
+      case '1 day':
+      default:
+        $time = '1 day';
+        break;
+    }
+    variable_set('special_notice_time', $time);
+  }
+
+  if (variable_get('site_frontpage', 'node') == 'front_page') {
+    variable_set('site_frontpage', 'node');
   }
 }
