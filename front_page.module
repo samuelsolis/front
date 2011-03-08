@@ -89,28 +89,32 @@ function front_page_init() {
 
   if (variable_get('front_page_enable', 0) && drupal_is_front_page()) {
     $_front_page = front_page_get_by_role();
+  }
 
-    if ($_front_page) {
-      switch ($_front_page['mode']) {
-        case 'themed':
-        case 'full':
-          $_GET['q'] = 'front_page';
-          // need to set variable site_frontpage to current path so that it thinks it is the front page.
-          $conf['site_frontpage'] = $_GET['q'];
-          break;
+  if (user_access('administer menu') && preg_match('@^front_page/preview/([0-9]+)$@', $_GET['q'], $match)) {
+    $_front_page = front_page_get_by_rid($match[1]);
+  }
 
-        case 'redirect':
-          $url = front_page_parse_url($_front_page['data']);
-          drupal_goto($url['path'], $url['options']);
-          break;
+  if ($_front_page) {
+    switch ($_front_page['mode']) {
+      case 'themed':
+      case 'full':
+        $_GET['q'] = 'front_page';
+        // need to set variable site_frontpage to current path so that it thinks it is the front page.
+        $conf['site_frontpage'] = $_GET['q'];
+        break;
 
-        case 'alias':
-          $url = front_page_parse_url($_front_page['data']);
-          $_GET['q'] = drupal_get_normal_path($url['path']);
-          // need to set variable site_frontpage to current path so that it thinks it is the front page.
-          $conf['site_frontpage'] = $_GET['q'];
-          break;
-      }
+      case 'redirect':
+        $url = front_page_parse_url($_front_page['data']);
+        drupal_goto($url['path'], $url['options']);
+        break;
+
+      case 'alias':
+        $url = front_page_parse_url($_front_page['data']);
+        $_GET['q'] = drupal_get_normal_path($url['path']);
+        // need to set variable site_frontpage to current path so that it thinks it is the front page.
+        $conf['site_frontpage'] = $_GET['q'];
+        break;
     }
 
     // turn caching off for this page as it is dependant on role.
@@ -122,9 +126,13 @@ function front_page_init() {
  * Function to handle the display of the front page themed and full types.
  */
 
-function front_page() {
+function front_page($role_id = NULL) {
   // $_front_page variable should already have been loaded in front_page_init() function.
   global $_front_page, $user;
+
+  if (is_numeric($role_id)) {
+    $_front_page = front_page_get_by_rid($role_id);
+  }
 
   if ($_front_page) {
     $mission_text = variable_get('special_notice_text', '');
@@ -190,6 +198,20 @@ function front_page_get_by_role($index = 0, $number = 1) {
           ->orderBy('weight', 'ASC')
           ->orderBy('rid', 'DESC')
           ->range($index, $number)
+          ->execute()
+          ->fetchAssoc();
+  return $result;
+}
+
+/*
+ * Function to return the first role enabled in front page, ordered by weight.
+ */
+
+function front_page_get_by_rid($rid) {
+  $result = db_select('front_page', 'fp')
+          ->fields('fp')
+          ->condition('rid', $rid)
+          ->condition('mode', '', '<>')
           ->execute()
           ->fetchAssoc();
   return $result;

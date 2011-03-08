@@ -274,7 +274,9 @@ function front_page_admin_arrange_form($form, &$form_state) {
   foreach ($front_page_data as $role_id => $role) {
     if (!empty($role['mode']) && $role_id > 1) {
       $form['roles'][$role_id]['title']['#markup'] = $roles[$role_id];
-      $form['roles'][$role_id]['mode'] = array(
+      $form['roles'][$role_id]['mode']['#markup'] = $role['mode'];
+      $form['roles'][$role_id]['preview']['#markup'] = l('preview','front_page/preview/'.$role_id,array('attributes' => array('target' => '_blank')));
+      $form['roles'][$role_id]['enabled'] = array(
         '#type' => 'checkbox',
         '#title' => t('Enable'),
         '#title_display' => 'invisible',
@@ -339,6 +341,8 @@ function theme_front_page_admin_arrange_form($variables) {
 
   $header = array(
     t('Role'),
+    t('Mole'),
+    t('Preview'),
     t('Enabled'),
     t('Weight'),
   );
@@ -353,6 +357,8 @@ function theme_front_page_admin_arrange_form($variables) {
     $row = array();
     $row[] = drupal_render($element['title']);
     $row[] = drupal_render($element['mode']);
+    $row[] = drupal_render($element['preview']);
+    $row[] = drupal_render($element['enabled']);
     $row[] = drupal_render($element['weight']);
 
     $row = array_merge(array('data' => $row), $element['#attributes']);
@@ -361,7 +367,7 @@ function theme_front_page_admin_arrange_form($variables) {
   }
   $output = '';
   if (empty($rows)) {
-    $rows[] = array(array('data' => $form['#empty_text'], 'colspan' => '2'));
+    $rows[] = array(array('data' => $form['#empty_text'], 'colspan' => '5'));
   }
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'front-page-arrange')));
   $output .= drupal_render_children($form);
