@@ -118,12 +118,12 @@ function front_page_admin($form, &$form_state) {
     '#title' => t('Been away for'),
     '#default_value' => variable_get('special_notice_time', ''),
     '#options' => array(
-      'one day' => t('one day'),
-      'one week' => t('one week'),
-      'one month' => t('one month'),
-      'three months' => t('three months'),
-      'six months' => t('six months'),
-      'one year' => t('one year'),
+      '1 day' => t('one day'),
+      '1 week' => t('one week'),
+      '1 month' => t('one month'),
+      '3 months' => t('three months'),
+      '6 months' => t('six months'),
+      '1 year' => t('one year'),
     ),
     '#description' => t('<p>The length of time to check for when users see the special notice which will be displayed as a <em>mission</em> style notice on the front page.<p>'),
   );
@@ -210,6 +210,14 @@ function front_page_admin_submit($form, &$form_state) {
   variable_set('site_offline_message', $form_state['values']['site_offline_message']);
   variable_set('front_page_breadcrumb', $form_state['values']['front_page_breadcrumb']);
   variable_set('front_page_breadcrumb_redirect', $form_state['values']['front_page_breadcrumb_redirect']);
+  if (!empty($form_state['values']['special_notice_text'])) {
+    variable_set('special_notice_time', $form_state['values']['special_notice_time']);
+    variable_set('special_notice_text', $form_state['values']['special_notice_text']);
+  }
+  else {
+    variable_del('special_notice_time');
+    variable_del('special_notice_text');
+  }
 
   db_query("UPDATE {front_page} SET mode=''");
   if (is_array($form_state['values']['roles'])) {

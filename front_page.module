@@ -33,7 +33,7 @@ function front_page_help($section) {
       }
       return t('<p>Setup custom front pages for your site. Click on the option to expand the form and customise your settings.</p><p><em>Anonymous User</em> = visitor not logged in  | <em>Authenticated User</em> = visitor who is logged in</p>') . $special_note;
     case 'admin/config/front/arrange':
-      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the '.l('Settings','admin/config/front').' tab</p>');
+      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the ' . l('Settings', 'admin/config/front') . ' tab</p>');
   }
 }
 
@@ -84,7 +84,7 @@ function front_page_init() {
 
   // let administrator know that there is a config error.
   if ($conf['site_frontpage'] == 'front_page' && user_access('administer menu')) {
-    drupal_set_message(t('There is a configuration error. The home page should not be set to the path "front_page". Please change this !link', array('!link' => l('here','admin/config/system/site-information'))), 'error');
+    drupal_set_message(t('There is a configuration error. The home page should not be set to the path "front_page". Please change this !link', array('!link' => l('here', 'admin/config/system/site-information'))), 'error');
   }
 
   if (variable_get('front_page_enable', 0) && drupal_is_front_page()) {
@@ -95,6 +95,8 @@ function front_page_init() {
         case 'themed':
         case 'full':
           $_GET['q'] = 'front_page';
+          // need to set variable site_frontpage to current path so that it thinks it is the front page.
+          $conf['site_frontpage'] = $_GET['q'];
           break;
 
         case 'redirect':
@@ -105,7 +107,7 @@ function front_page_init() {
         case 'alias':
           $url = front_page_parse_url($_front_page['data']);
           $_GET['q'] = drupal_get_normal_path($url['path']);
-          // need to set variable site_frontpage to current path so that it thinks it the front page for just this role.
+          // need to set variable site_frontpage to current path so that it thinks it is the front page.
           $conf['site_frontpage'] = $_GET['q'];
           break;
       }
@@ -119,17 +121,30 @@ function front_page_init() {
 /*
  * Function to handle the display of the front page themed and full types.
  */
+
 function front_page() {
   // $_front_page variable should already have been loaded in front_page_init() function.
-  global $_front_page;
+  global $_front_page, $user;
 
   if ($_front_page) {
+    $mission_text = variable_get('special_notice_text', '');
+    if (!empty($mission_text)) {
+      // calculate if user has visited recent enough
+      $tz = date_default_timezone_get();
+      date_default_timezone_set('UTC');
+      $time = strtotime('-' . variable_get('special_notice_time', '1 day'));
+      date_default_timezone_set($tz);
+      $mission = '';
+      if ($time > $user->access) {
+        $mission = '<div id="mission">' . $mission_text . '</div>';
+      }
+    }
     switch ($_front_page['mode']) {
       case 'themed':
-        return check_markup($_front_page['data'], $_front_page['filter_format']);
+        return $mission . check_markup($_front_page['data'], $_front_page['filter_format']);
 
       case 'full':
-        print check_markup($_front_page['data'], $_front_page['filter_format']);
+        print $mission . check_markup($_front_page['data'], $_front_page['filter_format']);
         exit;
     }
   }
@@ -143,6 +158,7 @@ function front_page() {
  * Function to parse a full URL including GET variables and fragment
  * to an array ready for drupal_goto(), url(), or l() functions.
  */
+
 function front_page_parse_url($path) {
   $url['path'] = $path;
   $url['options'] = array();
@@ -164,6 +180,7 @@ function front_page_parse_url($path) {
 /*
  * Function to return the first role enabled in front page, ordered by weight.
  */
+
 function front_page_get_by_role($index = 0, $number = 1) {
   global $user;
   $result = db_select('front_page', 'fp')
@@ -181,6 +198,7 @@ function front_page_get_by_role($index = 0, $number = 1) {
 /*
  * Function to return all the roles in front page, ordered by weight.
  */
+
 function front_page_get_all() {
   global $user;
   $result = db_select('front_page', 'fp')
