@@ -267,29 +267,35 @@ function front_page_admin_submit($form, &$form_state) {
 function front_page_admin_arrange_form($form, &$form_state) {
   $roles = user_roles();
   $front_page_data = front_page_get_all();
+  foreach ($roles as $rid => $role) {
+    $front_page_data[$rid]['name'] = $role;
+  }
 
   $form['roles'] = array(
     '#tree' => TRUE,
   );
   foreach ($front_page_data as $role_id => $role) {
-    if (!empty($role['mode']) && $role_id > 1) {
-      $form['roles'][$role_id]['title']['#markup'] = $roles[$role_id];
-      $form['roles'][$role_id]['mode']['#markup'] = $role['mode'];
-      $form['roles'][$role_id]['preview']['#markup'] = l('preview','front_page/preview/'.$role_id,array('attributes' => array('target' => '_blank')));
+    $form['roles'][$role_id]['title']['#markup'] = $role['name'];
+    $form['roles'][$role_id]['mode']['#markup'] = !empty($role['mode']) ? $role['mode'] : 'skip';
+    $form['roles'][$role_id]['preview']['#markup'] = !empty($role['mode']) ? l('preview', 'front_page/preview/' . $role_id, array('attributes' => array('target' => '_blank'))) : '';
+    if (!empty($role['mode'])) {
       $form['roles'][$role_id]['enabled'] = array(
         '#type' => 'checkbox',
         '#title' => t('Enable'),
         '#title_display' => 'invisible',
         '#default_value' => TRUE,
       );
-      $form['roles'][$role_id]['weight'] = array(
-        '#type' => 'weight',
-        '#title' => t('Weight'),
-        '#title_display' => 'invisible',
-        '#delta' => 10,
-        '#default_value' => $role['weight'],
-      );
     }
+    else {
+      $form['roles'][$role_id]['enabled']['#markup'] = 'disabled';
+    }
+    $form['roles'][$role_id]['weight'] = array(
+      '#type' => 'weight',
+      '#title' => t('Weight'),
+      '#title_display' => 'invisible',
+      '#delta' => 10,
+      '#default_value' => $role['weight'],
+    );
   }
 
   $form['submit'] = array(
@@ -367,7 +373,7 @@ function theme_front_page_admin_arrange_form($variables) {
   }
   $output = '';
   if (empty($rows)) {
-    $rows[] = array(array('data' => $form['#empty_text'], 'colspan' => '5'));
+    $rows[] = array(array('data' => 'no roles', 'colspan' => '5'));
   }
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'front-page-arrange')));
   $output .= drupal_render_children($form);
