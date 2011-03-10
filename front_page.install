@@ -166,3 +166,13 @@ function front_page_update_7200() {
     variable_set('site_frontpage', 'node');
   }
 }
+
+function front_page_update_7201() {
+  variable_del('special_notice_time');
+  variable_del('special_notice_text');
+
+  variable_del('front_page_breadcrumb');
+  $path = variable_get('front_page_breadcrumb_redirect', '');
+  variable_set('front_page_home_link_path', $path);
+  variable_del('front_page_breadcrumb_redirect');
+}

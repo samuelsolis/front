@@ -9,20 +9,21 @@
  * Form for configuring front page settings.
  */
 function front_page_admin($form, &$form_state) {
+
   $form['front_page_enable'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enabled'),
+    '#title' => t('Front Page Override'),
     '#description' => t('Enable this if you want the front page module to manage the home page.'),
     '#default_value' => variable_get('front_page_enable', 0),
   );
+  
   // Load any existing settings and build the by redirect by role form
   $form['roles'] = array(
+    '#tree' => TRUE,
     '#type' => 'fieldset',
     '#title' => t('Roles'),
-    '#description' => t('Designate a home page for each role.'),
-    //'#theme' => 'front_page_roles',
-    '#collapsible' => TRUE,
-    '#tree' => TRUE,
+    '#description' => t('These are the settings for each role. If Front Page Override is enabled when a user reaches the home page the site will iterate through the roles below from top to bottom until firstly the user has the role and secondly the role is not set to SKIP. If no roles get selected the site front page will be shown. To rearrange the order in which the roles are processed you may do this at the !link.', array('!link' => l(t('Arrange tab'), 'admin/config/front/arrange'))),
+    '#collapsible' => FALSE,
   );
 
   // build the form for roles
@@ -84,83 +85,6 @@ function front_page_admin($form, &$form_state) {
     );
   }
 
-  $form['front_offline'] = array(
-    '#type' => 'fieldset',
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#title' => t('Custom "Temporarily Offline" message and disable site for all except admins'),
-  );
-
-  $form['front_offline']['site_offline'] = array(
-    '#type' => 'radios',
-    '#title' => t('Site maintenance'),
-    '#default_value' => variable_get('site_offline', 0),
-    '#options' => array(t('Online'), t('Off-line')),
-    '#description' => t('When set to "Online", all visitors will be able to browse your site normally. When set to "Off-line", only users with the "administer site configuration" permission will be able to access your site to perform maintenance; all other visitors will see the site off-line message configured below. Authorized users can log in during "Off-line" mode directly via the <a href="@user-login">user login</a> page.', array('@user-login' => url('user', array('query' => drupal_get_destination())))),
-  );
-
-  $form['front_offline']['site_offline_message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Site off-line message'),
-    '#default_value' => variable_get('site_offline_message', t('@site is currently under maintenance. We should be back shortly. Thank you for your patience.', array('@site' => variable_get('site_name', t('This Drupal site'))))),
-    '#description' => t('Message to show visitors when the site is in off-line mode.')
-  );
-
-  $form['special_notice'] = array(
-    '#type' => 'fieldset',
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#title' => t('Custom mission for Authenticated Users who haven\'t visited the site for a set period'),
-  );
-
-  $form['special_notice']['special_notice_time'] = array(
-    '#type' => 'select',
-    '#title' => t('Been away for'),
-    '#default_value' => variable_get('special_notice_time', ''),
-    '#options' => array(
-      '1 day' => t('one day'),
-      '1 week' => t('one week'),
-      '1 month' => t('one month'),
-      '3 months' => t('three months'),
-      '6 months' => t('six months'),
-      '1 year' => t('one year'),
-    ),
-    '#description' => t('<p>The length of time to check for when users see the special notice which will be displayed as a <em>mission</em> style notice on the front page.<p>'),
-  );
-
-  $form['special_notice']['special_notice_text'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Body'),
-    '#default_value' => variable_get('special_notice_text', ''),
-    '#cols' => 60,
-    '#rows' => 10,
-    '#description' => t('Paste your HTML or TEXT here. It will be displayed as a <em>mission</em> style notice on the front page.'),
-  );
-
-  $form['override'] = array(
-    '#type' => 'fieldset',
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#title' => t('Override your HOME breadcrumb links'),
-  );
-
-  $form['override']['front_page_breadcrumb'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Redirect your site HOME links'),
-    '#return_value' => 1,
-    '#default_value' => variable_get('front_page_breadcrumb', 0),
-    '#description' => t('Check this box if you want to redirect users who click on any HOME links (including the HOME breadcrumb link). Useful if you have a splash page you don\'t want users brought back to when they click on HOME links from within your site.')
-  );
-
-  $form['override']['front_page_breadcrumb_redirect'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Redirect your site HOME links to'),
-    '#default_value' => variable_get('front_page_breadcrumb_redirect', ''),
-    '#cols' => 20, '#rows' => 1,
-    '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'),
-    '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q=')
-  );
-
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save Settings'),
@@ -206,18 +130,6 @@ function front_page_admin_validate($form, &$form_state) {
  */
 function front_page_admin_submit($form, &$form_state) {
   variable_set('front_page_enable', $form_state['values']['front_page_enable']);
-  variable_set('site_offline', $form_state['values']['site_offline']);
-  variable_set('site_offline_message', $form_state['values']['site_offline_message']);
-  variable_set('front_page_breadcrumb', $form_state['values']['front_page_breadcrumb']);
-  variable_set('front_page_breadcrumb_redirect', $form_state['values']['front_page_breadcrumb_redirect']);
-  if (!empty($form_state['values']['special_notice_text'])) {
-    variable_set('special_notice_time', $form_state['values']['special_notice_time']);
-    variable_set('special_notice_text', $form_state['values']['special_notice_text']);
-  }
-  else {
-    variable_del('special_notice_time');
-    variable_del('special_notice_text');
-  }
 
   db_query("UPDATE {front_page} SET mode=''");
   if (is_array($form_state['values']['roles'])) {
@@ -277,7 +189,7 @@ function front_page_admin_arrange_form($form, &$form_state) {
   foreach ($front_page_data as $role_id => $role) {
     $form['roles'][$role_id]['title']['#markup'] = $role['name'];
     $form['roles'][$role_id]['mode']['#markup'] = !empty($role['mode']) ? $role['mode'] : 'skip';
-    $form['roles'][$role_id]['preview']['#markup'] = !empty($role['mode']) ? l('preview', 'front_page/preview/' . $role_id, array('attributes' => array('target' => '_blank'))) : '';
+    $form['roles'][$role_id]['preview']['#markup'] = !empty($role['mode']) ? l(t('preview'), 'front_page/preview/' . $role_id, array('attributes' => array('target' => '_blank'))) : '';
     if (!empty($role['mode'])) {
       $form['roles'][$role_id]['enabled'] = array(
         '#type' => 'checkbox',
@@ -331,6 +243,23 @@ function front_page_admin_arrange_form_submit($form, &$form_state) {
           ->execute();
     }
   }
+}
+
+/**
+ * Form for setting the <front> placeholder to another path.
+ */
+function front_page_admin_home_links($form, &$form_state) {
+
+  $form['front_page_home_link_path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Redirect your site HOME links to'),
+    '#default_value' => variable_get('front_page_home_link_path', ''),
+    '#cols' => 20, '#rows' => 1,
+    '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'),
+    '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q=')
+  );
+
+  return system_settings_form($form);
 }
 
 /**
