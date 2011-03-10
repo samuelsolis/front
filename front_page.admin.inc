@@ -206,7 +206,7 @@ function front_page_admin_arrange_form($form, &$form_state) {
       '#title' => t('Weight'),
       '#title_display' => 'invisible',
       '#delta' => 10,
-      '#default_value' => $role['weight'],
+      '#default_value' => isset($role['weight']) ? $role['weight'] : 0,
     );
   }
 
