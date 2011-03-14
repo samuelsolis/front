@@ -94,7 +94,7 @@ function front_page_init() {
   global $_front_page, $conf;
 
   // let administrator know that there is a config error.
-  if ($conf['site_frontpage'] == 'front_page' && user_access('administer menu')) {
+  if (variable_get('site_frontpage', '') == 'front_page' && user_access('administer menu')) {
     drupal_set_message(t('There is a configuration error. The home page should not be set to the path "front_page". Please change this !link', array('!link' => l(t('here'), 'admin/config/system/site-information'))), 'error');
   }
 
