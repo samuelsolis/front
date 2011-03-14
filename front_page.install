@@ -130,38 +130,6 @@ function front_page_update_7200() {
     }
   }
 
-  $time = variable_get('special_notice_time', '');
-  if (!empty($time)) {
-    switch ($time) {
-      case 'one week':
-      case '1 week':
-        $time = '1 week';
-        break;
-      case 'one month':
-      case '1 month':
-        $time = '1 month';
-        break;
-      case 'three months':
-      case '3 months':
-        $time = '3 months';
-        break;
-      case 'six months':
-      case '6 months':
-        $time = '6 months';
-        break;
-      case 'one year':
-      case '1 year':
-        $time = '1 year';
-        break;
-      case 'one day':
-      case '1 day':
-      default:
-        $time = '1 day';
-        break;
-    }
-    variable_set('special_notice_time', $time);
-  }
-
   if (variable_get('site_frontpage', 'node') == 'front_page') {
     variable_set('site_frontpage', 'node');
   }
