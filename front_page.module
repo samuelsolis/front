@@ -17,10 +17,10 @@
  */
 function front_page_help($section) {
   switch ($section) {
-    case 'admin/config/front':
+    case 'admin/config/front/settings':
       return t('<p>Setup custom front pages for your site.</p>');
-    case 'admin/config/front/arrange':
-      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the !link.</p>', array('!link' => l(t('Settings tab'), 'admin/config/front')));
+    case 'admin/config/front/settings/arrange':
+      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the !link.</p>', array('!link' => l(t('Settings tab'), 'admin/config/front/settings')));
     case 'admin/config/front/home-links':
       return t('<p>If a HOME link is set, the &lt;front&gt; placeholder will be replaced with this value instead of the standard front page.</p>');
   }
@@ -32,21 +32,31 @@ function front_page_help($section) {
 function front_page_menu() {
   // Front page settings.
   $items['admin/config/front'] = array(
-    'title' => 'Front Page',
+   'title' => 'Front Page',
+   'description' => 'Configure user accounts.',
+   'position' => 'right',
+   'weight' => -15,
+   'page callback' => 'system_admin_menu_block_page',
+   'access arguments' => array('access administration pages'),
+   'file' => 'system.admin.inc',
+   'file path' => drupal_get_path('module', 'system'),
+  );
+  
+  $items['admin/config/front/settings'] = array(
+    'title' => 'Settings',
     'description' => 'Administer custom front page settings.',
-    'position' => 'right',
     'weight' => 0,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin'),
     'access arguments' => array('administer front page'),
     'file' => 'front_page.admin.inc',
   );
-  $items['admin/config/front/settings'] = array(
+  $items['admin/config/front/settings/settings'] = array(
     'title' => 'Settings',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
   );
-  $items['admin/config/front/arrange'] = array(
+  $items['admin/config/front/settings/arrange'] = array(
     'title' => 'Arrange',
     'description' => 'Ability to re-arrange what order front page roles are processed.',
     'page callback' => 'drupal_get_form',
@@ -62,7 +72,6 @@ function front_page_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin_home_links'),
     'access arguments' => array('administer front page'),
-    'type' => MENU_LOCAL_TASK,
     'file' => 'front_page.admin.inc',
     'weight' => 2,
   );
