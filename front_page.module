@@ -68,7 +68,7 @@ function front_page_menu() {
   );
   $items['admin/config/front/home-links'] = array(
     'title' => 'Home links',
-    'description' => 'Allows you to change the location of the <front> placeholder.',
+    'description' => 'Allows you to change the location of the &lt;front&gt; placeholder.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin_home_links'),
     'access arguments' => array('administer front page'),
