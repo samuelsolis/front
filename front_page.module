@@ -33,11 +33,11 @@ function front_page_menu() {
   // Front page settings.
   $items['admin/config/front'] = array(
    'title' => 'Front Page',
-   'description' => 'Configure user accounts.',
+   'description' => 'Configure front page.',
    'position' => 'right',
    'weight' => -15,
    'page callback' => 'system_admin_menu_block_page',
-   'access arguments' => array('access administration pages'),
+   'access arguments' => array('administer front page'),
    'file' => 'system.admin.inc',
    'file path' => drupal_get_path('module', 'system'),
   );
