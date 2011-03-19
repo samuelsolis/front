@@ -276,7 +276,7 @@ function theme_front_page_admin_arrange_form($variables) {
 
   $header = array(
     t('Role'),
-    t('Mole'),
+    t('Mode'),
     t('Preview'),
     t('Enabled'),
     t('Weight'),
