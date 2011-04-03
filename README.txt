@@ -2,62 +2,54 @@
 Introduction
 ================
 
-This module is for people who want a custom front page to their Drupal sites.
-
-The key functionality of this module is outlined below. 
-
-If you are comfortable with theming using a mix of php/html, I recommend you check out the
-handbook pages I have added to Drupal.org which explains how a more advanced method of theming
-your front page. http://drupal.org/node/46017 
+This module is for people who want a custom front page to their Drupal sites dependant on role.
 
 This module is intended for Drupal Version 7.x
-It will not work with earlier versions.
 
 
 Key Functionality
 =====================
 
-1. Allows you to specify a custom front page based on role type.
+- Allows you to specify a custom front page based on role type.
 
-e.g. For a musicians website, you could have a different front page for Drummers, Guitarists, Singers, Bass Players etc.
+- Allows 4 different page types:
+    FULL - Allows you to separate the front page from Drupal. This option will
+        output what you have set directly to the screen without running it through Drupal.
+    THEMED - Allows you to show a customised drupal page in much the same way you
+        would create a normal Drupal page.
+    REDIRECT - Allows you to 301 redirect the user to another URL.
+    ALIAS - Allows you to alias another Drupal path as the front page. This works
+        in much the same way that standard Drupal URL path aliasing works.
 
-3. Allows you to have a FULL front page or SPLASH page - a completely different layout to your 
-main drupal site - or alternatively as a THEMED full page, i.e. it loads with your default drupal site theme & layout.
+- Override your HOME and Breadcrumb links on your site.
+    e.g. you might have a splash front page that you don't want visitors already
+    on your site returning to when they click on HOME.
 
-4. Automatically REDIRECT users to a specific page or path.
-
-5. Disable your site for everyone but Administrators and display a custom "under maintenance" message.
-
-6. Display a custom "mission" style message for authenticated users who have not visited the site for a set period.
-
-e.g. If you have had a significant update to the site, you might want to have a special notice for users who haven't 
-visited for 1 month, or 1 week etc.
-
-7. Override your HOME and Breadcrumb links on your site.
-
-e.g. you might have a splash front page that you don't want visitors already on your site returning to when they
-click on HOME.
-
-8. You can include PHP/HTML or both in your frontpage
+- When using the Full or Themed options the data is run through Drupal's
+    filtering system using whatever input filter you want. This could be the PHP
+    filter if it is defined in your input filter.
 
 
 
 Installation
 ===============
 
-1. Upload or copy the 'front' directory and its content to your MODULES folder.
+1. Upload and Enable the Front Page module.
 
-2. Go to the MODULES section of your drupal site.
+2. Go to the Front Page Settings section at /admin/config/front.
 
-3. Enable the front_page.module
+3. Choose the roles you want to override the default site front page and select
+    the mode you want it to use (eg. Full, Themed, Redirect or Alias). Either
+    set the data section or path dependant on what option you choose.
+    Save the settings.
 
-4. Go to CONGIFURATION - ADVANCED FRONT PAGE SETTINGS
+4. Go to /admin/config/front/settings/arrange and drag and drop the roles into
+    the order in which you want them to run. Roles that are higher will be
+    processed first. Save the settings
 
-5. Paste in the TEXT/HTML/PHP contents of your front pages.
-
-6. Once you are happy with your front_pages, set the DEFAULT FRONT PAGE setting to be front_page.
-    
-7. Go to PEOPLE - PERMISSIONS and enable ACCESS FRONT PAGE for anonymous/authenticated users.
+5. Go back to /admin/config/front and check the box at the top titled
+    'Front Page Override'. Once you have saved this page again the front page
+    overrides will be working.
    
 ############################################
 IMPORTANT NOTE FOR THOSE USING PATH.MODULE (URL ALIAS):
@@ -65,42 +57,4 @@ Please ensure you have no other pages
 setup with the URL ALIAS 'front_page' when
 installing the front_page.module which uses the
 'front_page' URL Alias by default.
-##############################################  
-
-
-PROMOTED TO FRONT PAGE Example snippet
-=======================================
-The default front page when you install Drupal for the first time, is 'node' which displays a list of node teasers, where
-the nodes have been tagged as pages that are 'Promoted to Front Page'. 
-
-If you want to recreate that node listing after installing the front_page.module, simply paste the following snippet into 
-the text area provided on the front_page settings page and select the PHP filter before saving your new configuration.  
-
-<?php
-   print node_page_default();
-?>
-
-   
-   
-Uninstall
-=========
-
-1. Go to CONFIGURATION -> ADVANCED FRONT PAGE SETTINGS and change the default front page to something other than 'front_page' (e.g. 'node').
-
-2. Go to MODULES and de-select the front_page.module from your list of modules.
-
-3. Using FTP or other file manager, remove the front_page.module files and folder.
-
-  
-Hope you find it useful. 
-
-This module has been developed by a few members of the drupal community and 
-we're always looking for ideas for improving it. 
-
-Email me or post a message on the drupal.org site if you have any ideas on 
-how we can improve the module. 
-
-Dublin Drupaller
-
-
-dub@dublindrupaller.com
+############################################
