@@ -2,59 +2,51 @@
 Introduction
 ================
 
-This module is for people who want a custom front page to their Drupal sites dependant on role.
+This module is for people who want a custom front page to their Drupal sites.
 
-This module is intended for Drupal Version 7.x
+For all bugs, feature requests or support requests please use the
+Front Page issue queue at http://drupal.org/project/issues/front
 
 
 Key Functionality
 =====================
 
-- Allows you to specify a custom front page based on role type.
+1. Allows you to specify a custom front page based on role type.
 
-- Allows 4 different page types:
-    FULL - Allows you to separate the front page from Drupal. This option will
-        output what you have set directly to the screen without running it through Drupal.
-    THEMED - Allows you to show a customised drupal page in much the same way you
-        would create a normal Drupal page.
-    REDIRECT - Allows you to 301 redirect the user to another URL.
-    ALIAS - Allows you to alias another Drupal path as the front page. This works
-        in much the same way that standard Drupal URL path aliasing works.
+2. Allows 4 different override types:
+    1. Themed - Allows you to add content that will display as a standard
+          themed Drupal page.
+    2. Full - Allows you to add content that will be displayed on the screen
+          as is. This method is the same as declaring a whole HTML page.
+    3. Redirect - Allows you to 301 redirect the user to another path.
+    4. Alias - Allows you to specify a local path which will then display as
+          the home page without redirecting the user.
 
-- Override your HOME and Breadcrumb links on your site.
-    e.g. you might have a splash front page that you don't want visitors already
-    on your site returning to when they click on HOME.
+4. Allow Themed and Full display types to be passed through Drupals input filters.
 
-- When using the Full or Themed options the data is run through Drupal's
-    filtering system using whatever input filter you want. This could be the PHP
-    filter if it is defined in your input filter.
+5. Override Home Links to go to another local path. This could be to stop users
+    going back to a splash screen.
 
 
 
 Installation
 ===============
 
-1. Upload and Enable the Front Page module.
+1. Upload and install the Front Page module.
 
-2. Go to the Front Page Settings section at /admin/config/front.
+2. Go to Administer -> Settings -> Front Page.
 
-3. Choose the roles you want to override the default site front page and select
-    the mode you want it to use (eg. Full, Themed, Redirect or Alias). Either
-    set the data section or path dependant on what option you choose.
-    Save the settings.
+3. Expand any of the roles that you want to override the default front page and
+    select the appropriate method of override as well as filling in the variables
+    required for that method. Once the settings are correct save the form.
 
-4. Go to /admin/config/front/settings/arrange and drag and drop the roles into
-    the order in which you want them to run. Roles that are higher will be
-    processed first. Save the settings
+4. Go to Administer -> Settings -> Front Page -> Arrange.
 
-5. Go back to /admin/config/front and check the box at the top titled
-    'Front Page Override'. Once you have saved this page again the front page
-    overrides will be working.
-   
-############################################
-IMPORTANT NOTE FOR THOSE USING PATH.MODULE (URL ALIAS):
-Please ensure you have no other pages 
-setup with the URL ALIAS 'front_page' when
-installing the front_page.module which uses the
-'front_page' URL Alias by default.
-############################################
+5. Arrange the roles in the order in which you want them to process. Roles at
+    the top will process first and then work down the list. Once the order is
+    correct save the form.
+
+5. Go back to Administer -> Settings -> Front Page.
+
+6. Enable the 'Front Page Override' checkbox and then save the form. The front
+    page module should now be working correctly.

@@ -51,12 +51,7 @@ function front_page_menu() {
     'access arguments' => array('administer front page'),
     'file' => 'front_page.admin.inc',
   );
-  $items['admin/config/front/settings/settings'] = array(
-    'title' => 'Settings',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => 0,
-  );
-  $items['admin/config/front/settings/arrange'] = array(
+  $items['admin/config/front/arrange'] = array(
     'title' => 'Arrange',
     'description' => 'Ability to re-arrange what order front page roles are processed.',
     'page callback' => 'drupal_get_form',
