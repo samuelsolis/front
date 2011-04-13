@@ -238,6 +238,11 @@ function front_page_get_all() {
  *  with an alternative string instead of the site_frontpage setting.
  */
 function front_page_url_outbound_alter(&$path, &$options, &$original_path) {
+  // check if path is set to 'front_page' as this is our virtual home
+  // page and doesn't work properly unless used from home page.
+  if ($path == 'front_page') {
+    $original_path = $path = '';
+  }
   $newpath = variable_get('front_page_home_link_path', '');
   if (($path == '<front>' || empty($path)) && !empty($newpath)) {
     $original_path = $path = $newpath;
