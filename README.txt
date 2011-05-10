@@ -34,19 +34,19 @@ Installation
 
 1. Upload and install the Front Page module.
 
-2. Go to Administer -> Settings -> Front Page.
+2. Go to Administer -> Config -> Front Page.
 
 3. Expand any of the roles that you want to override the default front page and
     select the appropriate method of override as well as filling in the variables
     required for that method. Once the settings are correct save the form.
 
-4. Go to Administer -> Settings -> Front Page -> Arrange.
+4. Go to Administer -> Config -> Front Page -> Arrange.
 
 5. Arrange the roles in the order in which you want them to process. Roles at
     the top will process first and then work down the list. Once the order is
     correct save the form.
 
-5. Go back to Administer -> Settings -> Front Page.
+5. Go back to Administer -> Config -> Front Page.
 
 6. Enable the 'Front Page Override' checkbox and then save the form. The front
     page module should now be working correctly.
