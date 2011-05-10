@@ -16,7 +16,7 @@ function front_page_admin($form, &$form_state) {
     '#description' => t('Enable this if you want the front page module to manage the home page.'),
     '#default_value' => variable_get('front_page_enable', 0),
   );
-  
+
   // Load any existing settings and build the by redirect by role form
   $form['roles'] = array(
     '#tree' => TRUE,

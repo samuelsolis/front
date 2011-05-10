@@ -41,7 +41,7 @@ function front_page_menu() {
    'file' => 'system.admin.inc',
    'file path' => drupal_get_path('module', 'system'),
   );
-  
+
   $items['admin/config/front/settings'] = array(
     'title' => 'Settings',
     'description' => 'Administer custom front page settings.',
