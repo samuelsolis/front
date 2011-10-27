@@ -97,6 +97,7 @@ function front_page_permission() {
  * Implements hook_init().
  */
 function front_page_init() {
+  // Make sure front page module is not run when using cli (drush).
   if (drupal_is_cli()) {
     return;
   }
