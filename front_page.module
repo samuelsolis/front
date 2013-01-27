@@ -19,7 +19,7 @@ function front_page_help($section) {
   switch ($section) {
     case 'admin/config/front/settings':
       return t('<p>Setup custom front pages for your site.</p>');
-    case 'admin/config/front/settings/arrange':
+    case 'admin/config/front/arrange':
       return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the !link.</p>', array('!link' => l(t('Settings tab'), 'admin/config/front/settings')));
     case 'admin/config/front/home-links':
       return t('<p>If a HOME link is set, the &lt;front&gt; placeholder will be replaced with this value instead of the standard front page.</p>');
