@@ -262,3 +262,13 @@ function front_page_theme() {
     ),
   );
 }
+
+/**
+ * Implements hook_user_role_delete().
+ */
+function front_page_user_role_delete($role) {
+  // Delete Front configuration for the role being deleted.
+  db_delete('front_page')
+    ->condition('rid', $role->rid)
+    ->execute();
+}
