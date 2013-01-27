@@ -98,7 +98,8 @@ function front_page_permission() {
  */
 function front_page_init() {
   // Make sure front page module is not run when using cli (drush).
-  if (drupal_is_cli()) {
+  // Make sur front page module does not run when installing Drupal either.
+  if (drupal_is_cli() || drupal_installation_attempted()) {
     return;
   }
 
