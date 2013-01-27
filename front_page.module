@@ -49,7 +49,7 @@ function front_page_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin'),
     'access arguments' => array('administer front page'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
     'file' => 'front_page.admin.inc',
   );
   $items['admin/config/front/arrange'] = array(
@@ -58,7 +58,7 @@ function front_page_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin_arrange_form'),
     'access arguments' => array('administer front page'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
     'file' => 'front_page.admin.inc',
     'weight' => 1,
   );
@@ -68,7 +68,7 @@ function front_page_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('front_page_admin_home_links'),
     'access arguments' => array('administer front page'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
     'file' => 'front_page.admin.inc',
     'weight' => 2,
   );
