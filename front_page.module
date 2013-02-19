@@ -102,6 +102,10 @@ function front_page_init() {
   if (drupal_is_cli() || drupal_installation_attempted()) {
     return;
   }
+  // Don't run when site is in maintenance mode
+  if (variable_get('maintenance_mode', 0)) {
+    return;
+  }
   // Ignore non index.php requests (like cron)
   if (!empty($_SERVER['SCRIPT_FILENAME']) && DRUPAL_ROOT .'/index.php' != $_SERVER['SCRIPT_FILENAME']) {
     return;
