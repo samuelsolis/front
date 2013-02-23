@@ -107,7 +107,7 @@ function front_page_init() {
     return;
   }
   // Ignore non index.php requests (like cron)
-  if (!empty($_SERVER['SCRIPT_FILENAME']) && DRUPAL_ROOT .'/index.php' != $_SERVER['SCRIPT_FILENAME']) {
+  if (!empty($_SERVER['SCRIPT_FILENAME']) && realpath(DRUPAL_ROOT . '/index.php') != realpath($_SERVER['SCRIPT_FILENAME'])) {
     return;
   }
 
