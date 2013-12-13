@@ -1,0 +1,5 @@
+services:
+  front_page.event_subscriber:
+    class: Drupal\front_page\EventSubscriber\FrontPageSubscriber
+    tags:
+      - {name: event_subscriber}
