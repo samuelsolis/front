@@ -21,6 +21,9 @@ class FrontPageArrangeForm extends ConfigFormBase {
     return 'front_page_admin_arrange_form';
   }
 
+  /**
+   * BuildForm.
+   */
   public function buildForm(array $form, array &$form_state) {
     $roles = user_roles();
     $front_page_data = front_page_get_all();
@@ -28,9 +31,7 @@ class FrontPageArrangeForm extends ConfigFormBase {
       $front_page_data[$rid]['name'] = $role->label;
     }
 
-    $form['roles'] = array(
-      '#tree' => TRUE,
-    );
+    $form['roles'] = array('#tree' => TRUE);
     foreach ($front_page_data as $role_id => $role) {
       $form['roles'][$role_id]['title']['#markup'] = $role['name'];
       $form['roles'][$role_id]['mode']['#markup'] = !empty($role['mode'])
@@ -67,7 +68,7 @@ class FrontPageArrangeForm extends ConfigFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Submit Form.
    */
   public function submitForm(array &$form, array &$form_state) {
     $front_page_data = front_page_get_all();
@@ -92,7 +93,6 @@ class FrontPageArrangeForm extends ConfigFormBase {
           ->execute();
       }
     }
-
     parent::submitForm($form, $form_state);
   }
 }

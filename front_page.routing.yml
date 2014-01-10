@@ -30,7 +30,7 @@ front_page.home_links:
     _permission: 'administer front page'
 
 front_page.main:
-  path: '/main'
+  path: '/main/preview/{rid}'
   defaults:
     _content: 'Drupal\front_page\Controller\FrontPageMain::frontPage'
     _title: ''
