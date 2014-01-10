@@ -91,7 +91,6 @@ function front_page_permission() {
 
 /**
  * Function to parse a full URL including GET variables and fragment
- *
  * to an array ready for drupal_goto(), url(), or l() functions.
  */
 function front_page_parse_url($path) {
@@ -180,9 +179,7 @@ function front_page_url_outbound_alter(&$path, &$options, &$original_path) {
  */
 function front_page_theme() {
   return array(
-    'front_page_admin_arrange_form' => array(
-      'render element' => 'form',
-    ),
+    'front_page_admin_arrange_form' => array('render element' => 'form'),
   );
 }
 
@@ -199,14 +196,20 @@ function front_page_user_role_delete($role) {
 /**
  * Returns HTML for the front page arrange form into a table.
  *
- * @param $variables
+ * @param array $variables
  *   An associative array containing:
  *   - form: A render element representing the form.
  */
 function theme_front_page_admin_arrange_form($variables) {
   $form = $variables['form'];
 
-  drupal_add_tabledrag('front-page-arrange', 'order', 'sibling', 'front-page-weight');
+  // Enable the drag handles.
+  drupal_attach_tabledrag($form['roles'], array(
+    'table_id' => 'front-page-arrange',
+    'action' => 'order',
+    'relationship' => 'sibling',
+    'group' => 'front-page-weight',
+  ));
 
   $header = array(
     t('Role'),
@@ -238,7 +241,11 @@ function theme_front_page_admin_arrange_form($variables) {
   if (empty($rows)) {
     $rows[] = array(array('data' => 'no roles', 'colspan' => '5'));
   }
-  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'front-page-arrange')));
+  $output .= theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'front-page-arrange'),
+  ));
   $output .= drupal_render_children($form);
   return $output;
 }

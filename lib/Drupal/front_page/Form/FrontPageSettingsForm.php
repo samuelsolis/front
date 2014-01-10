@@ -21,15 +21,18 @@ class FrontPageSettingsForm extends ConfigFormBase {
     return 'front_page_admin';
   }
 
+  /**
+   * BuildForm.
+   */
   public function buildForm(array $form, array &$form_state) {
     $form['front_page_enable'] = array(
       '#type' => 'checkbox',
       '#title' => t('Front Page Override'),
       '#description' => t('Enable this if you want the front page module to manage the home page.'),
-      '#default_value' => config('front_page.settings')->get('enable', 0),
+      '#default_value' => config('front_page.settings')->get('enable'),
     );
 
-    // Load any existing settings and build the by redirect by role form
+    // Load any existing settings and build the by redirect by role form.
     $form['roles'] = array(
       '#tree' => TRUE,
       '#type' => 'fieldset',
@@ -38,7 +41,7 @@ class FrontPageSettingsForm extends ConfigFormBase {
       '#collapsible' => FALSE,
     );
 
-    // build the form for roles
+    // Build the form for roles.
     $roles = user_roles();
     $front_page_data = front_page_get_all();
 
@@ -60,16 +63,16 @@ class FrontPageSettingsForm extends ConfigFormBase {
       'alias' => t('Will display the page listed in path as if it were the home page. This option does not redirect.'),
     );
 
-    // Format the options to use as radio buttons
+    // Format the options to use as radio buttons.
     $options = array();
     foreach ($modes as $key => $mode) {
       $options[$key] = "<strong>{$mode}:</strong> {$descriptions[$key]}";
     }
 
-    // Iterate each role
+    // Iterate each role.
     foreach ($roles as $rid => $role) {
 
-      // Determine the mode for this role
+      // Determine the mode for this role.
       $mode = isset($front_page_data[$rid]['mode']) ? $front_page_data[$rid]['mode'] : '';
 
       $form['roles'][$rid] = array(
@@ -96,7 +99,7 @@ class FrontPageSettingsForm extends ConfigFormBase {
           'visible' => array(
             ':input[name="roles[' . $rid . '][mode]"]' => array(
               array('value' => 'full'),
-              array('value' => 'themed')
+              array('value' => 'themed'),
             ),
           ),
         ),
@@ -121,7 +124,7 @@ class FrontPageSettingsForm extends ConfigFormBase {
           'visible' => array(
             ':input[name="roles[' . $rid . '][mode]"]' => array(
               array('value' => 'redirect'),
-              array('value' => 'alias')
+              array('value' => 'alias'),
             ),
           ),
         ),
@@ -137,7 +140,7 @@ class FrontPageSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Validate Form.
    */
   public function validateForm(array &$form, array &$form_state) {
     if (is_array($form_state['values']['roles'])) {
@@ -149,11 +152,13 @@ class FrontPageSettingsForm extends ConfigFormBase {
               \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][data][value', $form_state, 'You must set the data field for ' . $role['mode'] . ' mode.');
             }
             break;
+
           case 'redirect':
             if (empty($role['path'])) {
               \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][path', $form_state, 'You must set the path field for redirect mode.');
             }
             break;
+
           case 'alias':
             if (empty($role['path'])) {
               \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][path', $form_state, 'You must set the path field for alias mode.');
@@ -162,6 +167,7 @@ class FrontPageSettingsForm extends ConfigFormBase {
               \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][path', $form_state, 'You must set only the URI part of a URL in alias mode.');
             }
             break;
+
         }
       }
     }
@@ -170,49 +176,53 @@ class FrontPageSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Submit Form.
    */
   public function submitForm(array &$form, array &$form_state) {
     $config = config('front_page.settings')->set('enable', $form_state['values']['front_page_enable']);
     $config->save();
 
-    // variable_set('front_page_enable', $form_state['values']['front_page_enable']);
-    db_query("UPDATE {front_page} SET mode=''");
+    db_update('front_page')
+      ->fields(array('mode' => ''))
+      ->execute();
     if (is_array($form_state['values']['roles'])) {
       foreach ($form_state['values']['roles'] as $rid => $role) {
         switch ($role['mode']) {
           case 'themed':
           case 'full':
             db_merge('front_page')
-                ->key(array('rid' => $rid))
-                ->fields(array(
-                  'mode' => $role['mode'],
-                  'data' => $role['data_wrapper']['data']['value'],
-                  'filter_format' => $role['data_wrapper']['data']['format'],
-                ))
-                ->execute();
+              ->key(array('rid' => $rid))
+              ->fields(array(
+                'mode' => $role['mode'],
+                'data' => $role['data_wrapper']['data']['value'],
+                'filter_format' => $role['data_wrapper']['data']['format'],
+              ))
+              ->execute();
             break;
+
           case 'redirect':
           case 'alias':
             db_merge('front_page')
-                ->key(array('rid' => $rid))
-                ->fields(array(
-                  'mode' => $role['mode'],
-                  'data' => $role['path'],
-                  'filter_format' => '',
-                ))
-                ->execute();
+              ->key(array('rid' => $rid))
+              ->fields(array(
+                'mode' => $role['mode'],
+                'data' => $role['path'],
+                'filter_format' => '',
+              ))
+              ->execute();
             break;
+
           default:
             db_merge('front_page')
-                ->key(array('rid' => $rid))
-                ->fields(array(
-                  'mode' => '',
-                  'data' => '',
-                  'filter_format' => '',
-                ))
-                ->execute();
+              ->key(array('rid' => $rid))
+              ->fields(array(
+                'mode' => '',
+                'data' => '',
+                'filter_format' => '',
+              ))
+              ->execute();
             break;
+
         }
       }
     }

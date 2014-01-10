@@ -43,11 +43,10 @@ class FrontPageSubscriber implements EventSubscriberInterface {
     }
 
     if (\Drupal::currentUser()->hasPermission('administer menu')
-      && preg_match('@^main/preview/([0-9]+)$@', current_path(), $match)) {
+      && preg_match('@^main/preview/([a-z]+)$@', current_path(), $match)) {
 
       $_front_page = front_page_get_by_rid($match[1]);
     }
-
     if ($_front_page) {
       switch ($_front_page['mode']) {
         case 'themed':
