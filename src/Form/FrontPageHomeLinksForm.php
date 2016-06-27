@@ -39,11 +39,11 @@ class FrontPageHomeLinksForm extends ConfigFormBase {
     $config = $this->config('front_page.settings');
     $form['front_page_home_link_path'] = array(
       '#type' => 'textfield',
-      '#title' => t('Redirect your site HOME links to'),
+      '#title' => $this->t('Redirect your site HOME links to'),
       '#default_value' => $config->get('home_link_path'),
       '#cols' => 20,
       '#rows' => 1,
-      '#description' => t('Specify where the user should be redirected to. An example would be <em>node/12</em>. Leave blank when you\'re not using HOME redirect.'),
+      '#description' => $this->t('Specify where the user should be redirected to. An example would be <em>/node/12</em>. Leave blank when you\'re not using HOME redirect.'),
       '#field_prefix' => $base_url . base_path(),
     );
 

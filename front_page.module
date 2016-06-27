@@ -27,10 +27,6 @@ function front_page_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $
     case 'front_page.settings':
       return t('<p>Setup custom front pages for your site.</p>');
 
-    case 'front_page.arrange':
-      $settings = Url::fromUserInput('/admin/config/front/settings');
-      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the :url.</p>', array(':url' => Link::fromTextAndUrl(t('Settings tab'), $settings)));
-
     case 'front_page.home_links':
       return t('<p>If a HOME link is set, the &lt;front&gt; placeholder will be replaced with this value instead of the standard front page.</p>');
   }
@@ -79,7 +75,7 @@ function front_page_get_by_role($index = 0, $number = 1) {
  * Function to return the first role enabled in front page, ordered by weight.
  */
 function front_page_get_by_rid($rid) {
-  drupal_set_message('test');
+
   $result = Database::getConnection()->select('front_page', 'fp')
     ->fields('fp')
     ->condition('rid', $rid)
