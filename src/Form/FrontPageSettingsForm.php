@@ -7,7 +7,10 @@
 
 namespace Drupal\front_page\Form;
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Configure site information settings for this site.
@@ -22,14 +25,21 @@ class FrontPageSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * BuildForm.
+   * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  protected function getEditableConfigNames() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $form['front_page_enable'] = array(
       '#type' => 'checkbox',
       '#title' => t('Front Page Override'),
       '#description' => t('Enable this if you want the front page module to manage the home page.'),
-      '#default_value' => config('front_page.settings')->get('enable'),
+      '#default_value' => \Drupal::config('front_page.settings')->get('enable'),
     );
 
     // Load any existing settings and build the by redirect by role form.
@@ -37,8 +47,7 @@ class FrontPageSettingsForm extends ConfigFormBase {
       '#tree' => TRUE,
       '#type' => 'fieldset',
       '#title' => t('Roles'),
-      '#description' => t('These are the settings for each role. If Front Page Override is enabled when a user reaches the home page the site will iterate through the roles below from top to bottom until firstly the user has the role and secondly the role is not set to SKIP. If no roles get selected the site front page will be shown. To rearrange the order in which the roles are processed you may do this at the !link.', array('!link' => l(t('Arrange tab'), 'admin/config/front/arrange'))),
-      '#collapsible' => FALSE,
+      '#description' => t('These are the settings for each role. If Front Page Override is enabled when a user reaches the home page the site will iterate through the roles below from top to bottom until firstly the user has the role and secondly the role is not set to SKIP. If no roles get selected the site front page will be shown. To rearrange the order in which the roles are processed you may do this at the !link.', array('!link' => \Drupal::l(t('Arrange tab'), URL::fromUserInput('/admin/config/front/arrange')))),
     );
 
     // Build the form for roles.
@@ -76,10 +85,9 @@ class FrontPageSettingsForm extends ConfigFormBase {
       $mode = isset($front_page_data[$rid]['mode']) ? $front_page_data[$rid]['mode'] : '';
 
       $form['roles'][$rid] = array(
-        '#type' => 'fieldset',
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#title' => t('Front Page for !rolename (%mode)', array('!rolename' => $role->label, '%mode' => $modes[$mode])),
+        '#type' => 'details',
+        '#open' => FALSE,
+        '#title' => t('Front Page for !rolename (%mode)', array('!rolename' => $role->label(), '%mode' => $modes[$mode])),
         '#weight' => isset($front_page_data[$rid]['weight']) ? $front_page_data[$rid]['weight'] : 0,
       );
 
@@ -140,31 +148,31 @@ class FrontPageSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Validate Form.
+   * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
-    if (is_array($form_state['values']['roles'])) {
-      foreach ($form_state['values']['roles'] as $rid => $role) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    if (is_array($form_state->getValue('roles'))) {
+      foreach ($form_state->getValue('roles') as $rid => $role) {
         switch ($role['mode']) {
           case 'themed':
           case 'full':
             if (empty($role['data_wrapper']['data']['value'])) {
-              \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][data][value', $form_state, 'You must set the data field for ' . $role['mode'] . ' mode.');
+              $form_state->setErrorByName('roles][' . $rid . '][data_wrapper][data][value', $this->t('You must set the data field for %mode mode.', array('%mode' => $role['mode'])));
             }
             break;
 
           case 'redirect':
             if (empty($role['path'])) {
-              \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][path', $form_state, 'You must set the path field for redirect mode.');
+              $form_state->setErrorByName('roles][' . $rid . '][path', $this->t('You must set the path field for redirect mode.'));
             }
             break;
 
           case 'alias':
             if (empty($role['path'])) {
-              \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][path', $form_state, 'You must set the path field for alias mode.');
+              $form_state->setErrorByName('roles][' . $rid . '][path', $this->t('You must set the path field for alias mode.'));
             }
             elseif (!preg_match('@^[^?#]+$@', $role['path'])) {
-              \Drupal::formBuilder()->setErrorByName('roles][' . $rid . '][path', $form_state, 'You must set only the URI part of a URL in alias mode.');
+              $form_state->setErrorByName('roles][' . $rid . '][path', $this->t('You must set only the URI part of a URL in alias mode.'));
             }
             break;
 
@@ -176,22 +184,22 @@ class FrontPageSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Submit Form.
+   * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
-    $config = config('front_page.settings')->set('enable', $form_state['values']['front_page_enable']);
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $config = \Drupal::configFactory()->getEditable('front_page.settings')->set('enable', $form_state->getValue('front_page_enable'));
     $config->save();
 
-    db_update('front_page')
+    Database::getConnection()->update('front_page')
       ->fields(array('mode' => ''))
       ->execute();
-    if (is_array($form_state['values']['roles'])) {
-      foreach ($form_state['values']['roles'] as $rid => $role) {
+    if (is_array($form_state->getValue('roles'))) {
+      foreach ($form_state->getValue('roles') as $rid => $role) {
         switch ($role['mode']) {
           case 'themed':
           case 'full':
-            db_merge('front_page')
-              ->key(array('rid' => $rid))
+          Database::getConnection()->merge('front_page')
+              ->key('rid', $rid)
               ->fields(array(
                 'mode' => $role['mode'],
                 'data' => $role['data_wrapper']['data']['value'],
@@ -202,8 +210,8 @@ class FrontPageSettingsForm extends ConfigFormBase {
 
           case 'redirect':
           case 'alias':
-            db_merge('front_page')
-              ->key(array('rid' => $rid))
+          Database::getConnection()->merge('front_page')
+              ->key('rid', $rid)
               ->fields(array(
                 'mode' => $role['mode'],
                 'data' => $role['path'],
@@ -213,8 +221,8 @@ class FrontPageSettingsForm extends ConfigFormBase {
             break;
 
           default:
-            db_merge('front_page')
-              ->key(array('rid' => $rid))
+            Database::getConnection()->merge('front_page')
+              ->key('rid', $rid)
               ->fields(array(
                 'mode' => '',
                 'data' => '',

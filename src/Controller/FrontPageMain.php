@@ -14,7 +14,7 @@ class FrontPageMain extends ControllerBase {
   }
 
   /**
-   * Mettod to handle the display of the front page themed and full types.
+   * Method to handle the display of the front page themed and full types.
    */
   public function frontPage() {
     // Variable $_front_page  should already have been loaded

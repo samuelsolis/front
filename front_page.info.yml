@@ -4,4 +4,4 @@ description: 'Allows site admins setup custom front pages for the site.'
 package: Administration
 version: VERSION
 core: 8.x
-configure: front.settings
+configure: front_page.settings

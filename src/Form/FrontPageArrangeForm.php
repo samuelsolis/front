@@ -7,7 +7,10 @@
 
 namespace Drupal\front_page\Form;
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Configure site information settings for this site.
@@ -22,24 +25,27 @@ class FrontPageArrangeForm extends ConfigFormBase {
   }
 
   /**
-   * BuildForm.
+   * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  protected function getEditableConfigNames() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $roles = user_roles();
     $front_page_data = front_page_get_all();
     foreach ($roles as $rid => $role) {
-      $front_page_data[$rid]['name'] = $role->label;
+      $front_page_data[$rid]['name'] = $role->label();
     }
 
     $form['roles'] = array('#tree' => TRUE);
     foreach ($front_page_data as $role_id => $role) {
       $form['roles'][$role_id]['title']['#markup'] = $role['name'];
-      $form['roles'][$role_id]['mode']['#markup'] = !empty($role['mode'])
-        ? $role['mode']
-        : 'skip';
-      $form['roles'][$role_id]['preview']['#markup'] = !empty($role['mode'])
-        ? l(t('preview'), 'main/preview/' . $role_id, array('attributes' => array('target' => '_blank')))
-        : '';
+      $form['roles'][$role_id]['mode']['#markup'] = !empty($role['mode']) ? $role['mode'] : 'skip';
+      $form['roles'][$role_id]['preview']['#markup'] = !empty($role['mode']) ? \Drupal::l(t('preview'), URL::fromUserInput('/main/preview/' . $role_id)->setOptions(array('attributes' => array('target' => '_blank')))) : '';
       if (!empty($role['mode'])) {
         $form['roles'][$role_id]['enabled'] = array(
           '#type' => 'checkbox',
@@ -68,14 +74,14 @@ class FrontPageArrangeForm extends ConfigFormBase {
   }
 
   /**
-   * Submit Form.
+   * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $front_page_data = front_page_get_all();
-    foreach ($form_state['values']['roles'] as $rid => $role) {
+    foreach ($form_state->getValue('roles') as $rid => $role) {
       if (isset($role['mode']) && !$role['mode'] || !isset($front_page_data[$rid])) {
-        db_merge('front_page')
-          ->key(array('rid' => $rid))
+        Database::getConnection()->merge('front_page')
+          ->key('rid',$rid)
           ->fields(array(
             'mode' => '',
             'data' => '',
@@ -85,8 +91,8 @@ class FrontPageArrangeForm extends ConfigFormBase {
           ->execute();
       }
       else {
-        db_merge('front_page')
-          ->key(array('rid' => $rid))
+        Database::getConnection()->merge('front_page')
+          ->key('rid', $rid)
           ->fields(array(
             'weight' => $role['weight'],
           ))

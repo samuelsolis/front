@@ -14,79 +14,26 @@
  * please post them at http://drupal.org/project/issues/front.
  */
 
+use Drupal\Core\Database\Database;
+use Drupal\Core\Render\Element;
+use \Drupal\Core\Link;
+use \Drupal\Core\Url;
+
 /**
  * Implements hook_help().
  */
-function front_page_help($section) {
-  switch ($section) {
-    case 'admin/config/front/settings':
+function front_page_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'front_page.settings':
       return t('<p>Setup custom front pages for your site.</p>');
 
-    case 'admin/config/front/arrange':
-      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the !link.</p>', array('!link' => l(t('Settings tab'), 'admin/config/front/settings')));
+    case 'front_page.arrange':
+      $settings = Url::fromUserInput('/admin/config/front/settings');
+      return t('<p>Arrange the order in which roles will be checked for custom front page settings. Roles will be processed from top to bottom. To enable other roles you must first enable them in the :url.</p>', array(':url' => Link::fromTextAndUrl(t('Settings tab'), $settings)));
 
-    case 'admin/config/front/home-links':
+    case 'front_page.home_links':
       return t('<p>If a HOME link is set, the &lt;front&gt; placeholder will be replaced with this value instead of the standard front page.</p>');
   }
-}
-
-/**
- * Implements hook_menu().
- */
-function front_page_menu() {
-
-  // Front page settings.
-  $items['admin/config/front'] = array(
-    'title' => 'Front Page',
-    'description' => 'Configure front page.',
-    'position' => 'right',
-    'weight' => -15,
-    'route_name' => 'front_page.admin_index',
-  );
-
-  $items['admin/config/front/settings'] = array(
-    'title' => 'Settings',
-    'description' => 'Administer custom front page settings.',
-    'weight' => 0,
-    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
-    'route_name' => 'front_page.settings',
-  );
-
-  $items['admin/config/front/arrange'] = array(
-    'title' => 'Arrange',
-    'description' => 'Ability to re-arrange what order front page roles are processed.',
-    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
-    'weight' => 1,
-    'route_name' => 'front_page.arrange',
-  );
-
-  $items['admin/config/front/home-links'] = array(
-    'title' => 'Home links',
-    'description' => 'Allows you to change the location of the &lt;front&gt; placeholder.',
-    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
-    'weight' => 2,
-    'route_name' => 'front_page.home_links',
-  );
-
-  $items['main'] = array(
-    'title' => '',
-    'type' => MENU_SUGGESTED_ITEM,
-    'route_name' => 'front_page.main',
-  );
-
-  return $items;
-}
-
-/**
- * Implements hook_permission().
- */
-function front_page_permission() {
-  return array(
-    'administer front page' => array(
-      'title' => t('Administer front page'),
-      'description' => t('Allow users to make changes to the front page settings.'),
-    ),
-  );
 }
 
 /**
@@ -116,9 +63,9 @@ function front_page_parse_url($path) {
  */
 function front_page_get_by_role($index = 0, $number = 1) {
   $roles = \Drupal::currentUser()->getRoles();
-  $result = db_select('front_page', 'fp')
+  $result = Database::getConnection()->select('front_page', 'fp')
     ->fields('fp')
-    ->condition('rid', $roles)
+    ->condition('rid', $roles, 'IN')
     ->condition('mode', '', '<>')
     ->orderBy('weight', 'ASC')
     ->orderBy('rid', 'DESC')
@@ -132,7 +79,8 @@ function front_page_get_by_role($index = 0, $number = 1) {
  * Function to return the first role enabled in front page, ordered by weight.
  */
 function front_page_get_by_rid($rid) {
-  $result = db_select('front_page', 'fp')
+  drupal_set_message('test');
+  $result = Database::getConnection()->select('front_page', 'fp')
     ->fields('fp')
     ->condition('rid', $rid)
     ->condition('mode', '', '<>')
@@ -145,8 +93,7 @@ function front_page_get_by_rid($rid) {
  * Function to return all the roles in front page, ordered by weight.
  */
 function front_page_get_all() {
-  global $user;
-  $result = db_select('front_page', 'fp')
+  $result = Database::getConnection()->select('front_page', 'fp')
     ->fields('fp')
     ->orderBy('weight', 'ASC')
     ->orderBy('rid', 'DESC')
@@ -156,30 +103,14 @@ function front_page_get_all() {
 }
 
 /**
- * Implements hook_page_url_outbound_alter().
- *
- * This alters anything parsed through the url() function to replace the <front>
- * string with an alternative string instead of the site_frontpage setting.
- */
-function front_page_url_outbound_alter(&$path, &$options, &$original_path) {
-  // Check if path is set to 'front_page' as this is our virtual home
-  // page and doesn't work properly unless used from home page.
-  if ($path == 'main') {
-    $original_path = $path = '';
-  }
-  $config  = $this->config('front_page.settings');
-  $newpath = $config->get('home_link_path', '');
-  if (($path == '<front>' || empty($path)) && !empty($newpath)) {
-    $original_path = $path = $newpath;
-  }
-}
-
-/**
  * Implements hook_theme().
  */
 function front_page_theme() {
   return array(
-    'front_page_admin_arrange_form' => array('render element' => 'form'),
+    'front_page_admin_arrange_form' => array(
+      'render element' => 'form',
+      'function' => 'theme_front_page_admin_arrange_form',
+    ),
   );
 }
 
@@ -188,7 +119,7 @@ function front_page_theme() {
  */
 function front_page_user_role_delete($role) {
   // Delete Front configuration for the role being deleted.
-  db_delete('front_page')
+  Database::getConnection()->delete('front_page')
     ->condition('rid', $role->rid)
     ->execute();
 }
@@ -220,18 +151,19 @@ function theme_front_page_admin_arrange_form($variables) {
   );
 
   $rows = array();
-  foreach (element_children($form['roles']) as $rid) {
+  $renderer = \Drupal::service('renderer');
+  foreach (Element::children($form['roles']) as $rid) {
     $element = &$form['roles'][$rid];
 
     // Add special classes to be used for tabledrag.js.
     $element['weight']['#attributes']['class'] = array('front-page-weight');
 
     $row = array();
-    $row[] = drupal_render($element['title']);
-    $row[] = drupal_render($element['mode']);
-    $row[] = drupal_render($element['preview']);
-    $row[] = drupal_render($element['enabled']);
-    $row[] = drupal_render($element['weight']);
+    $row[] = $renderer->render($element['title'], FALSE);
+    $row[] = $renderer->render($element['mode'], FALSE);
+    $row[] = $renderer->render($element['preview'], FALSE);
+    $row[] = $renderer->render($element['enabled'], FALSE);
+    $row[] = $renderer->render($element['weight'], FALSE);
 
     $row = array_merge(array('data' => $row), $element['#attributes']);
     $row['class'][] = 'draggable';
@@ -241,11 +173,14 @@ function theme_front_page_admin_arrange_form($variables) {
   if (empty($rows)) {
     $rows[] = array(array('data' => 'no roles', 'colspan' => '5'));
   }
-  $output .= theme('table', array(
-    'header' => $header,
-    'rows' => $rows,
+
+  $front_page_arrange = [
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
     'attributes' => array('id' => 'front-page-arrange'),
-  ));
+  ];
+  $output .= $renderer->render($front_page_arrange);
   $output .= drupal_render_children($form);
   return $output;
 }
