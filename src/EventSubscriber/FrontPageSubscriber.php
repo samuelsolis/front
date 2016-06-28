@@ -39,7 +39,7 @@ class FrontPageSubscriber implements EventSubscriberInterface {
       $current_weigth = null;
       foreach ($roles as $role) {
         $role_config = $config->get('rid_' . $role);
-        if(($role_config['enabled'] == true) && (($role_config['weigth'] < $current_weigth) || $current_weigth === null)) {
+        if((isset($role_config['enabled']) && $role_config['enabled'] == true) && (($role_config['weigth'] < $current_weigth) || $current_weigth === null)) {
           $front_page = $role_config['path'];
           $current_weigth = $role_config['weigth'];
         }
